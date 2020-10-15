@@ -10,7 +10,7 @@ import Home from "./Home";
 import SignIn from "./SignIn";
 import Logout from "./Logout";
 import useUser from "../_hooks/useUser";
-
+import UserData from "./UserData"
 export default function CustomRouter() {
   // useUser is a custom hook (src/_hooks/useUser.tsx)
   const { isLoggedIn, loaded } = useUser();
@@ -22,11 +22,18 @@ export default function CustomRouter() {
           <Route path="/logout">
             <Logout />
           </Route>
+        
           <Route path="/signin">
-            <Redirect to="/user"></Redirect>
+            <Redirect to="/Dashboard"></Redirect>
           </Route>
-          <Route path="/user">
+          <Route path="/Dashboard">
             <UserInfo />
+          </Route>
+          <Route path="/User">
+            <UserData/>
+          </Route>
+          <Route path="/">
+            <Redirect to="/Dashboard"></Redirect>
           </Route>
         </Switch>
       ) : (

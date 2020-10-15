@@ -12,7 +12,7 @@ export default function Home() {
     </div>
   ) : (
     <div>
-      You are signed in! Check out your <Link to="/user">user page</Link>
+      You are signed in! Check out your <Link to="/Dashboard">user page</Link>
     </div>
   );
 }

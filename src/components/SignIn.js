@@ -17,6 +17,8 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import Enum from 'enum'
+import { freeSet } from '@coreui/icons'
+
 const INPUTS = new Enum(['email',
   'password'])
 // enum INPUTS {
@@ -80,11 +82,23 @@ export default function SignIn() {
  
 
   return (
-    <div className="c-app c-default-layout flex-row align-items-center">
-      <CContainer>
-        <CRow className="justify-content-center">
+<div 
+    style={{
+         backgroundImage: `url("https://fbh.com/wp-content/uploads/2015/06/o-HOSPITAL-HALLWAY-facebook.jpg?__cf_chl_captcha_tk__=7a4b633d4b8d5d9d71d79ed3d46b0cd31ccd2b6a-1602757945-0-AVX4eHkmMjezeMY9JI_JA_RjfKLboZfyXKdaIV6fYlzZNYJGCSeyG3BhDEMVF9_oYuEtf2GS9zfptium0Dc6zeJXrvh-y4TdMtKp3m1xhSd7kZTFbxhkBaJufMkPxXHadshephSQW6lIZIuyjHO39a8QUVbuTsAp5KZP7LlbXKtt1GOgWqEzfdhVCFJG3Q3vHihc1j4oHooHnHq-XZ2u4CvY6pzYp-uOixSCqjOVyl_se5niOByrqD6-Zmgrardb85fuB2vTpedEthdKYa-PirtiySiJR1gFenuPdOkrp5CXdHEGshZrU-Ewhh5cvPQN7zmoAirtdLo-SER2xFHCPPVsw5pt02W19KLXmk4LlQSERoBNLj58NwqW1sQN8I_MIHP95yihNwKp6VSFF2kSm5GAy9t5BvjRvXh0gp-ZiELZhV8P5-uXK4zD-n3ssdL-Iwm3VfqoSxTb-JAqtBHlOm0s_3VFOjGdaer03NCsvOVd0MrE8IK6sUOJECyZ-uGXPUWRT95JnuzMd8xuIuUYpiSlHra424Q65nMQlO07fZBGo7-AML8ru9HirWpRy9y5eA")`,
+         height: '100vh',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover'
+      }}>
+        <div className="c-app c-default-layout flex-row align-items-center" style={{
+          height: '100%',
+    width: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
+              
+        <CContainer >
+        <CRow className="justify-content-center" >
           <CCol md="8">
-            <CCardGroup>
+            <CCardGroup style={{ zIndex:2,position: "relative" }}>
               <CCard className="p-4">
                 <CCardBody>
                   <CForm>
@@ -93,7 +107,7 @@ export default function SignIn() {
                     <CInputGroup className="mb-3">
                       <CInputGroupPrepend>
                         <CInputGroupText>
-                          <CIcon name="cil-user" />
+                          <CIcon content={freeSet.cilUser}/>
                         </CInputGroupText>
                       </CInputGroupPrepend>
        
@@ -102,7 +116,7 @@ export default function SignIn() {
                     <CInputGroup className="mb-4">
                       <CInputGroupPrepend>
                         <CInputGroupText>
-                          <CIcon name="cil-lock-locked" />
+                          <CIcon content={freeSet.cilLockLocked} />
                         </CInputGroupText>
                       </CInputGroupPrepend>
            
@@ -135,7 +149,7 @@ export default function SignIn() {
         </CRow>
       </CContainer>
     </div>
-
+    </div>
     // <div className="sign_in">
     //   <span>Email:</span>
     //   <input

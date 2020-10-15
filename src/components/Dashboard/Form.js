@@ -1,6 +1,8 @@
 import * as React from "react";
 import Header from './Header'
 import Table from './Table'
+import { Link } from "react-router-dom";
+
 import {
     CButton,
     CCard,
@@ -78,7 +80,7 @@ export default class Form extends React.Component {
                     <CLabel htmlFor="text-input">Full name</CLabel>
                   </CCol>
                   <CCol xs="12" md="9">
-                    <CInput id="text-input" name="text-input" placeholder="Enter Full Name" />
+                    <CInput id="text-input" name="text-input" placeholder="Enter Full Name" required/>
                     <CFormText>Please enter full name</CFormText>
                   </CCol>
                 </CFormGroup>
@@ -88,7 +90,27 @@ export default class Form extends React.Component {
                     <CLabel htmlFor="date-input">Date of birth</CLabel>
                   </CCol>
                   <CCol xs="12" md="9">
-                    <CInput type="date" id="date-input" name="date-input" placeholder="date" />
+                    <CInput type="date" id="date-input" name="date-input" placeholder="date" required/>
+                  </CCol>
+                </CFormGroup>
+
+                <CFormGroup row>
+                  <CCol md="3">
+                    <CLabel>Gender</CLabel>
+                  </CCol>
+                  <CCol md="9">
+                    <CFormGroup variant="custom-radio" inline>
+                      <CInputRadio custom id="inline-radio1" name="inline-radios" value="Male" />
+                      <CLabel variant="custom-checkbox" htmlFor="inline-radio1">Male</CLabel>
+                    </CFormGroup>
+                    <CFormGroup variant="custom-radio" inline>
+                      <CInputRadio custom id="inline-radio2" name="inline-radios" value="Female" />
+                      <CLabel variant="custom-checkbox" htmlFor="inline-radio2">Female</CLabel>
+                    </CFormGroup>
+                    <CFormGroup variant="custom-radio" inline>
+                      <CInputRadio custom id="inline-radio3" name="inline-radios" value="Other" />
+                      <CLabel variant="custom-checkbox" htmlFor="inline-radio3">Other</CLabel>
+                    </CFormGroup>
                   </CCol>
                 </CFormGroup>
 
@@ -121,6 +143,7 @@ export default class Form extends React.Component {
                       id="textarea-input" 
                       rows="9"
                       placeholder="User Address..." 
+                      required
                     />
                   </CCol>
                 </CFormGroup>
@@ -176,7 +199,9 @@ export default class Form extends React.Component {
               </CForm>
             </CCardBody>
             <CCardFooter>
-              <CButton type="submit" size="sm" color="primary"><CIcon name="cil-scrubber" /> Submit</CButton>
+            <Link to="/User">
+              <CButton type="submit" size="sm" color="primary" ><CIcon name="cil-scrubber" /> Submit</CButton>
+              </Link>
               <CButton type="reset" size="sm" color="danger"><CIcon name="cil-ban" /> Reset</CButton>
             </CCardFooter>
           </CCard>
