@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   CCollapse,
   CButton,
@@ -17,8 +17,8 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import usersData from './Data'
-
-
+import Firebase from '../../firebase'
+import _ from 'lodash';
   
 
   const fields = [
@@ -49,6 +49,7 @@ const getBadge = status => {
 
 export default function Dashboard() {
   const [details, setDetails] = useState([])
+  const [data, setData] = useState(null)
   // const [items, setItems] = useState(usersData)
 
   const toggleDetails = (index) => {
@@ -62,22 +63,37 @@ export default function Dashboard() {
     setDetails(newDetails)
   }
 
+
+  
+  var users
+   useEffect(() => {
+    Firebase.database().ref('/').on("value",(item) => {
+     // console.log(item.val())
+      users = _.map( item.val(), (e) => {
+        return e.data 
+      })
+      setData(users)
+    })
+    
+  })
+
   return  (
     <>
     
-      <CRow>
+      <CRow style={{margin:'30px'}}>
       <CCol xs="12" lg="12">
           <CCard>
 
-            <CCardHeader>
-              Users
+            <CCardHeader style={{alignSelf:'center'}}>
+            <span className="h5" >Users</span>
+              
               
             </CCardHeader>
 
             <CCardBody>
-              
+             
             <CDataTable
-              items={usersData}
+              items={data}
               fields={fields}
               columnFilter
               tableFilter
@@ -87,51 +103,51 @@ export default function Dashboard() {
               hover
               sorter
               pagination
-              scopedSlots = {{
-                'status':
-                  (item)=>(
-                    <td>
-                      <CBadge color={getBadge(item.status)}>
-                        {item.status}
-                      </CBadge>
-                    </td>
-                  ),
-                'show_details':
-                  (item, index)=>{
-                    return (
-                      <td className="py-2">
-                        <CButton
-                          color="primary"
-                          variant="outline"
-                          shape="square"
-                          size="sm"
-                          onClick={()=>{toggleDetails(index)}}
-                        >
-                          {details.includes(index) ? 'Hide' : 'Show'}
-                        </CButton>
-                      </td>
-                      )
-                  },
-                'details':
-                    (item, index)=>{
-                      return (
-                      <CCollapse show={details.includes(index)}>
-                        <CCardBody>
-                          <h4>
-                            {item.username}
-                          </h4>
-                          <p className="text-muted">User since: {item.registered}</p>
-                          <CButton size="sm" color="info">
-                            User Settings
-                          </CButton>
-                          <CButton size="sm" color="danger" className="ml-1">
-                            Delete
-                          </CButton>
-                        </CCardBody>
-                      </CCollapse>
-                    )
-                  }
-              }}
+              // scopedSlots = {{
+              //   'status':
+              //     (item)=>(
+              //       <td>
+              //         <CBadge color={getBadge(item.status)}>
+              //           {item.status}
+              //         </CBadge>
+              //       </td>
+              //     ),
+              //   'show_details':
+              //     (item, index)=>{
+              //       return (
+              //         <td className="py-2">
+              //           <CButton
+              //             color="primary"
+              //             variant="outline"
+              //             shape="square"
+              //             size="sm"
+              //             onClick={()=>{toggleDetails(index)}}
+              //           >
+              //             {details.includes(index) ? 'Hide' : 'Show'}
+              //           </CButton>
+              //         </td>
+              //         )
+              //     },
+              //   'details':
+              //       (item, index)=>{
+              //         return (
+              //         <CCollapse show={details.includes(index)}>
+              //           <CCardBody>
+              //             <h4>
+              //               {item.username}
+              //             </h4>
+              //             <p className="text-muted">User since: {item.registered}</p>
+              //             <CButton size="sm" color="info">
+              //               User Settings
+              //             </CButton>
+              //             <CButton size="sm" color="danger" className="ml-1">
+              //               Delete
+              //             </CButton>
+              //           </CCardBody>
+              //         </CCollapse>
+              //       )
+              //     }
+              // }}
             />
             </CCardBody>
           </CCard>

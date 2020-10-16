@@ -1,5 +1,5 @@
 import * as React from "react";
-import { auth } from "../firebase";
+import Firebase from "../firebase";
 
 import {
   CButton,
@@ -18,7 +18,7 @@ import {
 import CIcon from '@coreui/icons-react'
 import Enum from 'enum'
 import { freeSet } from '@coreui/icons'
-
+import Bg from '../assets/bg.jpg'
 const INPUTS = new Enum(['email',
   'password'])
 // enum INPUTS {
@@ -58,7 +58,7 @@ export default function SignIn() {
   };
 
   const trySignIn = async () => {
-    auth.signInWithEmailAndPassword(email, password).catch((err) => {
+    Firebase.auth().signInWithEmailAndPassword(email, password).catch((err) => {
       setPassword("");
       switch (err.code) {
         default:
@@ -84,16 +84,15 @@ export default function SignIn() {
   return (
 <div 
     style={{
-         backgroundImage: `url("https://fbh.com/wp-content/uploads/2015/06/o-HOSPITAL-HALLWAY-facebook.jpg?__cf_chl_captcha_tk__=7a4b633d4b8d5d9d71d79ed3d46b0cd31ccd2b6a-1602757945-0-AVX4eHkmMjezeMY9JI_JA_RjfKLboZfyXKdaIV6fYlzZNYJGCSeyG3BhDEMVF9_oYuEtf2GS9zfptium0Dc6zeJXrvh-y4TdMtKp3m1xhSd7kZTFbxhkBaJufMkPxXHadshephSQW6lIZIuyjHO39a8QUVbuTsAp5KZP7LlbXKtt1GOgWqEzfdhVCFJG3Q3vHihc1j4oHooHnHq-XZ2u4CvY6pzYp-uOixSCqjOVyl_se5niOByrqD6-Zmgrardb85fuB2vTpedEthdKYa-PirtiySiJR1gFenuPdOkrp5CXdHEGshZrU-Ewhh5cvPQN7zmoAirtdLo-SER2xFHCPPVsw5pt02W19KLXmk4LlQSERoBNLj58NwqW1sQN8I_MIHP95yihNwKp6VSFF2kSm5GAy9t5BvjRvXh0gp-ZiELZhV8P5-uXK4zD-n3ssdL-Iwm3VfqoSxTb-JAqtBHlOm0s_3VFOjGdaer03NCsvOVd0MrE8IK6sUOJECyZ-uGXPUWRT95JnuzMd8xuIuUYpiSlHra424Q65nMQlO07fZBGo7-AML8ru9HirWpRy9y5eA")`,
+         backgroundImage: `url(${Bg})`,
          height: '100vh',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           backgroundSize: 'cover'
       }}>
-        <div className="c-app c-default-layout flex-row align-items-center" style={{
-          height: '100%',
-    width: '100%',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
+        <div className="c-app c-default-layout flex-row align-items-center" 
+          style={{
+         height: '100%', width: '100%',backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
               
         <CContainer >
         <CRow className="justify-content-center" >

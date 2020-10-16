@@ -40,10 +40,26 @@ import {
     CModalTitle,
   } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
+import Firebase from '../../firebase'
 export default class Form extends React.Component {
-    state={
-        curTime : new Date().toLocaleString(),
-      }
+  constructor(){
+    super();
+    this.state={
+      curTime : new Date().toLocaleString(),
+      name: "",
+      dob: null,
+      gender: "",
+      phone: null,
+      email: "",
+      address: "",
+      doctor: "",
+      disease: "",
+      nextDate: null
+
+    }
+     this.formSubmit = this.formSubmit.bind(this);
+  }
+    
 
       setTime = () => {
           this.setState({curTime : new Date().toLocaleString()})
@@ -55,10 +71,47 @@ export default class Form extends React.Component {
          window.setInterval(function () {
           this.setTime();
         }.bind(this), 1000);
+
+       
       }
+      formSubmit() {
+      //  event.preventDefault();
+        console.log('subbbbbmit')
+        let data ={
+         Name:this.state.name,
+          Dob:this.state.dob,
+          Gender:this.state.gender,
+          Phone:this.state.phone,
+          Email:this.state.email,
+          Address:this.state.address,
+          Doctor:this.state.address,
+          Disease:this.state.disease,
+          Date:new Date().toLocaleString(),
+          NextDate:this.state.nextDate
+        }
+        console.log(data)
+                Firebase.database().ref('/').push({
+                  data
+      })
+      .then((doc) => {
+        window.location.reload()
+      })
+      .catch((error) => {
+    console.error(error);
+  })
+      }
+
+      componentWillUnmount() {
+        // fix Warning: Can't perform a React state update on an unmounted component
+        this.setState = (state,callback)=>{
+            return;
+        };
+    }
 
     render(){
 
+      //Add alert on error
+      //Add reset button
     
   return  (
 
@@ -72,7 +125,7 @@ export default class Form extends React.Component {
               <small> Elements</small>
             </CCardHeader> */}
             <CCardBody>
-              <CForm action="" method="post" encType="multipart/form-data" className="form-horizontal">
+              <CForm className="form-horizontal">
                 
 
                 <CFormGroup row>
@@ -80,7 +133,7 @@ export default class Form extends React.Component {
                     <CLabel htmlFor="text-input">Full name</CLabel>
                   </CCol>
                   <CCol xs="12" md="9">
-                    <CInput id="text-input" name="text-input" placeholder="Enter Full Name" required/>
+                    <CInput id="text-input" name="text-input" defaultValue={this.state.name} onChange={e => {this.setState({ name:e.target.value })}} placeholder="Enter Full Name" required/>
                     <CFormText>Please enter full name</CFormText>
                   </CCol>
                 </CFormGroup>
@@ -90,7 +143,7 @@ export default class Form extends React.Component {
                     <CLabel htmlFor="date-input">Date of birth</CLabel>
                   </CCol>
                   <CCol xs="12" md="9">
-                    <CInput type="date" id="date-input" name="date-input" placeholder="date" required/>
+                    <CInput defaultValue={this.state.dob} onChange={e => {this.setState({ dob:e.target.value })}} type="date" id="date-input" name="date-input" placeholder="date" required/>
                   </CCol>
                 </CFormGroup>
 
@@ -100,15 +153,21 @@ export default class Form extends React.Component {
                   </CCol>
                   <CCol md="9">
                     <CFormGroup variant="custom-radio" inline>
-                      <CInputRadio custom id="inline-radio1" name="inline-radios" value="Male" />
+                      <CInputRadio defaultValue="male" onChange={e => {this.setState({ gender:e.target.value })}} 
+                        checked={this.state.gender === "male"}
+                        custom id="inline-radio1" name="inline-radios" />
                       <CLabel variant="custom-checkbox" htmlFor="inline-radio1">Male</CLabel>
                     </CFormGroup>
                     <CFormGroup variant="custom-radio" inline>
-                      <CInputRadio custom id="inline-radio2" name="inline-radios" value="Female" />
+                      <CInputRadio defaultValue="female" onChange={e => {this.setState({ gender:e.target.value })}} 
+                        checked={this.state.gender === "female"}
+                        custom id="inline-radio2" name="inline-radios" />
                       <CLabel variant="custom-checkbox" htmlFor="inline-radio2">Female</CLabel>
                     </CFormGroup>
                     <CFormGroup variant="custom-radio" inline>
-                      <CInputRadio custom id="inline-radio3" name="inline-radios" value="Other" />
+                      <CInputRadio defaultValue="other" onChange={e => {this.setState({ gender:e.target.value })}} 
+                        checked={this.state.gender === "other"}
+                        custom id="inline-radio3" name="inline-radios" />
                       <CLabel variant="custom-checkbox" htmlFor="inline-radio3">Other</CLabel>
                     </CFormGroup>
                   </CCol>
@@ -119,7 +178,7 @@ export default class Form extends React.Component {
                     <CLabel htmlFor="number">Phone No.</CLabel>
                   </CCol>
                   <CCol xs="12" md="9">
-                    <CInput type="tel" id="number" placeholder="+919876543210" required />
+                    <CInput defaultValue={this.state.phone} onChange={e => {this.setState({ phone:e.target.value })}} type="tel" id="number" placeholder="+919876543210" required />
                   </CCol>
                 </CFormGroup>
 
@@ -128,7 +187,7 @@ export default class Form extends React.Component {
                     <CLabel htmlFor="email-input">Email Input</CLabel>
                   </CCol>
                   <CCol xs="12" md="9">
-                    <CInput type="email" id="email-input" name="email-input" placeholder="Enter Email" autoComplete="email"/>
+                    <CInput defaultValue={this.state.email} onChange={e => {this.setState({ email:e.target.value })}} type="email" id="email-input" name="email-input" placeholder="Enter Email" autoComplete="email"/>
                     <CFormText className="help-block">Please enter your email</CFormText>
                   </CCol>
                 </CFormGroup>
@@ -139,6 +198,7 @@ export default class Form extends React.Component {
                   </CCol>
                   <CCol xs="12" md="9">
                     <CTextarea 
+                      defaultValue={this.state.address} onChange={e => {this.setState({ address:e.target.value })}}
                       name="textarea-input" 
                       id="textarea-input" 
                       rows="9"
@@ -153,7 +213,8 @@ export default class Form extends React.Component {
                     <CLabel htmlFor="select">Doctor</CLabel>
                   </CCol>
                   <CCol xs="12" md="9">
-                    <CSelect custom name="select" id="select">
+                    <CSelect defaultValue={this.state.doctor} onChange={e => {this.setState({ doctor:e.target.value })}} 
+                      custom name="select" id="select">
                       <option value="0">Please select Doctor</option>
                       <option value="1">Doctor #1</option>
                       <option value="2">Doctor #2</option>
@@ -167,7 +228,7 @@ export default class Form extends React.Component {
                     <CLabel htmlFor="select">Disease</CLabel>
                   </CCol>
                   <CCol xs="12" md="9">
-                    <CSelect custom name="select" id="select">
+                    <CSelect defaultValue={this.state.disease} onChange={e => {this.setState({ disease:e.target.value })}} custom name="select" id="select">
                       <option value="0">Please select Type</option>
                       <option value="1">Type #1</option>
                       <option value="2">Type #2</option>
@@ -191,7 +252,7 @@ export default class Form extends React.Component {
                     <CLabel htmlFor="date-input">Next Visit</CLabel>
                   </CCol>
                   <CCol xs="12" md="9">
-                    <CInput type="date" id="date-input" name="date-input" placeholder="date" />
+                    <CInput defaultValue={this.state.nextDate} onChange={e => {this.setState({ nextDate:e.target.value })}} type="date" id="date-input" name="date-input" placeholder="date" />
                   </CCol>
                 </CFormGroup>
 
@@ -199,9 +260,9 @@ export default class Form extends React.Component {
               </CForm>
             </CCardBody>
             <CCardFooter>
-            <Link to="/User">
-              <CButton type="submit" size="sm" color="primary" ><CIcon name="cil-scrubber" /> Submit</CButton>
-              </Link>
+              {/* <Link to="/User"> */}
+              <CButton onClick={this.formSubmit} size="sm" color="primary" ><CIcon name="cil-scrubber" /> Submit</CButton>
+              {/* </Link> */}
               <CButton type="reset" size="sm" color="danger"><CIcon name="cil-ban" /> Reset</CButton>
             </CCardFooter>
           </CCard>

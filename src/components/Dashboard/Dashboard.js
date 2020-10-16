@@ -18,13 +18,12 @@ import CIcon from '@coreui/icons-react'
 import Form from './Form'
 export default function Dashboard() {
   const [info, setInfo] = useState(false)
+  
+  
   return  (
     <>
      <Header/>
      <CCard>
-        <CCardHeader>
-          Standard Buttons
-        </CCardHeader>
         <CCardBody>
           <CRow className="align-items-center" >
             
@@ -33,17 +32,6 @@ export default function Dashboard() {
             </CCol>
 
 
-
-            <CCol col="4" sm="4" md="2" xl className="col-xs-12 col-sm-6 col-md-3 col-lg-3">
-              <CButton block color="secondary">check</CButton>
-            </CCol>
-            <CCol col="4" sm="4" md="2" xl className="col-xs-12 col-sm-6 col-md-3 col-lg-3">
-              <CButton block color="success">check</CButton>
-            </CCol>
-            <CCol col="4" sm="4" md="2" xl className="col-xs-12 col-sm-6 col-md-3 col-lg-3">
-              <CButton block color="warning">check</CButton>
-            </CCol>
-           
           </CRow>
           </CCardBody>
 
@@ -68,6 +56,9 @@ export default function Dashboard() {
             </CModal>
 
           </CCardBody>
+          <div>
+            <p>hi</p>
+          </div>
     </>
   
   )
