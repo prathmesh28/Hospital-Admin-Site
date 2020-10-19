@@ -18,8 +18,11 @@ import {
   } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { freeSet } from '@coreui/icons'
+import { browserHistory } from "react-router";
 
-export default function UserData() {
+class UserData extends React.Component{
+render(){
+
   return(
     <CRow>
         <CCol xs="12" sm="12" md="4" lg="4">
@@ -33,7 +36,6 @@ export default function UserData() {
                 </CWidgetIcon>
                 <CRow >
                   <CCol xs="6" sm="6" md="6" lg="6">
-                  <span className="h5">Age</span>
                   </CCol>
                   <CCol xs="6" sm="6" md="6" lg="6">
                   <span className="h6">Age</span>
@@ -59,3 +61,5 @@ export default function UserData() {
     </CRow>
   );
 }
+}
+export default UserData

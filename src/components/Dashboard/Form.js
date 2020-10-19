@@ -1,46 +1,28 @@
 import * as React from "react";
-import Header from './Header'
-import Table from './Table'
-import { Link } from "react-router-dom";
-
 import {
     CButton,
     CCard,
     CCardBody,
     CCardFooter,
-    CCardHeader,
     CCol,
-    CCollapse,
-    CDropdownItem,
-    CDropdownMenu,
-    CDropdownToggle,
-    CFade,
     CForm,
     CFormGroup,
     CFormText,
-    CValidFeedback,
-    CInvalidFeedback,
     CTextarea,
     CInput,
-    CInputFile,
-    CInputCheckbox,
     CInputRadio,
-    CInputGroup,
-    CInputGroupAppend,
-    CInputGroupPrepend,
-    CDropdown,
-    CInputGroupText,
     CLabel,
     CSelect,
     CRow,
-    CModal,
-    CModalBody,
-    CModalFooter,
-    CModalHeader,
-    CModalTitle,
   } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import Firebase from '../../firebase'
+import { freeSet } from '@coreui/icons'
+  
+import {toast} from 'react-toastify';  
+import 'react-toastify/dist/ReactToastify.css'; 
+toast.configure()
+
 export default class Form extends React.Component {
   constructor(){
     super();
@@ -54,52 +36,78 @@ export default class Form extends React.Component {
       address: "",
       doctor: "",
       disease: "",
-      nextDate: null
-
+      nextDate: null,
+      message: "error",
     }
      this.formSubmit = this.formSubmit.bind(this);
   }
-    
+  
+  notify = (e)=>{  
+    toast(e)  
+  } 
+ 
 
-      setTime = () => {
-          this.setState({curTime : new Date().toLocaleString()})
-      }
-      componentWillMount(){
-        this.setTime();
-      }
-      componentDidMount(){
-         window.setInterval(function () {
-          this.setTime();
-        }.bind(this), 1000);
 
-       
+  setTime = () => {
+      this.setState({curTime : new Date().toLocaleString()})
+  }
+  componentWillMount(){
+    this.setTime();
+  }
+  componentDidMount(){
+      window.setInterval(function () {
+      this.setTime();
+    }.bind(this), 1000);
+  }
+
+  formSubmit() {
+        if (this.validateForm()) {
+              let data ={
+              Name:this.state.name,
+                Dob:this.state.dob,
+                Gender:this.state.gender,
+                Phone:this.state.phone,
+                Email:this.state.email,
+                Address:this.state.address,
+                Doctor:this.state.doctor,
+                Disease:this.state.disease,
+                Date:new Date().toLocaleString(),
+                NextDate:this.state.nextDate
+              }
+              console.log(data)
+                      Firebase.database().ref('/').push({
+                        data
+              })
+              .then((doc) => {
+              //  this.setState({message:'User Added'})
+                this.notify('user added')
+                window.location.reload()
+              })
+              .catch((error) => {
+                this.notify(error)
+                console.error(error);
+              })
+            }
       }
-      formSubmit() {
-      //  event.preventDefault();
-        console.log('subbbbbmit')
-        let data ={
-         Name:this.state.name,
-          Dob:this.state.dob,
-          Gender:this.state.gender,
-          Phone:this.state.phone,
-          Email:this.state.email,
-          Address:this.state.address,
-          Doctor:this.state.address,
-          Disease:this.state.disease,
-          Date:new Date().toLocaleString(),
-          NextDate:this.state.nextDate
+
+      validateForm() {
+        let formIsValid = true;
+
+        console.log(this.state.phone)
+        if (this.state.phone=== "" || this.state.phone=== null) {
+          formIsValid = false;
+          // this.setState({ message: "*Please enter your mobile no."})
+          this.notify("Please enter your mobile no.")
+         
         }
-        console.log(data)
-                Firebase.database().ref('/').push({
-                  data
-      })
-      .then((doc) => {
-        window.location.reload()
-      })
-      .catch((error) => {
-    console.error(error);
-  })
+        
+        
+        return formIsValid;
+  
+  
       }
+  
+  
 
       componentWillUnmount() {
         // fix Warning: Can't perform a React state update on an unmounted component
@@ -111,19 +119,16 @@ export default class Form extends React.Component {
     render(){
 
       //Add alert on error
-      //Add reset button
+      //Add check internet connection alert
     
   return  (
 
     
 
 <CRow>
+
         <CCol xs="12" md="12">
           <CCard>
-            {/* <CCardHeader>
-              Basic Form
-              <small> Elements</small>
-            </CCardHeader> */}
             <CCardBody>
               <CForm className="form-horizontal">
                 
@@ -181,7 +186,6 @@ export default class Form extends React.Component {
                     <CInput defaultValue={this.state.phone} onChange={e => {this.setState({ phone:e.target.value })}} type="tel" id="number" placeholder="+919876543210" required />
                   </CCol>
                 </CFormGroup>
-
                 <CFormGroup row>
                   <CCol md="3">
                     <CLabel htmlFor="email-input">Email Input</CLabel>
@@ -260,10 +264,7 @@ export default class Form extends React.Component {
               </CForm>
             </CCardBody>
             <CCardFooter>
-              {/* <Link to="/User"> */}
-              <CButton onClick={this.formSubmit} size="sm" color="primary" ><CIcon name="cil-scrubber" /> Submit</CButton>
-              {/* </Link> */}
-              <CButton type="reset" size="sm" color="danger"><CIcon name="cil-ban" /> Reset</CButton>
+              <CButton onClick={this.formSubmit} size="md" color="primary" ><CIcon content={freeSet.cilScrubber} /> Submit</CButton>
             </CCardFooter>
           </CCard>
           </CCol>

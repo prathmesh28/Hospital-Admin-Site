@@ -60,10 +60,9 @@ export default function SignIn() {
   const trySignIn = async () => {
     Firebase.auth().signInWithEmailAndPassword(email, password).catch((err) => {
       setPassword("");
-      switch (err.code) {
-        default:
-          setErrorResponse("An unknown error has occured");
-      }
+      
+          setErrorResponse(err.message);
+      
     });
   };
 
@@ -121,6 +120,7 @@ export default function SignIn() {
            
                       <CInput type="password" value={password} onChange={updateValue.bind(null, INPUTS.password)} placeholder="Password" autoComplete="current-password" />
                     </CInputGroup>
+                    <div className="error_response">{errorResponse}</div>
                     <CRow>
                       <CCol xs="6">
                         <CButton color="primary" onClick={trySignIn} className="px-4">Login</CButton>

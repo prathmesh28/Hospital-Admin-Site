@@ -29,7 +29,7 @@ export default function CustomRouter() {
           <Route path="/Dashboard">
             <UserInfo />
           </Route>
-          <Route path="/User">
+          <Route path="/User/:id">
             <UserData/>
           </Route>
           <Route path="/">
