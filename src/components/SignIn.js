@@ -1,6 +1,5 @@
 import * as React from "react";
 import Firebase from "../firebase";
-
 import {
   CButton,
   CCard,
@@ -32,7 +31,7 @@ export default function SignIn() {
   const [errorResponse, setErrorResponse] = React.useState("");
 
   const clearError = () => {
-    if (errorResponse != "") {
+    if (errorResponse !== "") {
       setErrorResponse("");
     }
   };
@@ -54,6 +53,7 @@ export default function SignIn() {
       case INPUTS.password:
         setPassword(e.target.value);
         break;
+      default :break;
     }
   };
 

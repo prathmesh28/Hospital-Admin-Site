@@ -18,15 +18,17 @@ import {
 import CIcon from '@coreui/icons-react'
 import Firebase from '../../firebase'
 import { freeSet } from '@coreui/icons'
-  
+import { v4 as uuidv4 } from 'uuid';
 import {toast} from 'react-toastify';  
 import 'react-toastify/dist/ReactToastify.css'; 
 toast.configure()
+
 
 export default class Form extends React.Component {
   constructor(){
     super();
     this.state={
+      id: '' ,
       curTime : new Date().toLocaleString(),
       name: "",
       dob: null,
@@ -60,10 +62,14 @@ export default class Form extends React.Component {
     }.bind(this), 1000);
   }
 
-  formSubmit() {
-        if (this.validateForm()) {
-              let data ={
-              Name:this.state.name,
+  formSubmit = async () => {
+    
+   // console.log(this.state.id)
+        if (this.validateForm(0)) {
+                
+             //   
+                let data ={
+                Name:this.state.name,
                 Dob:this.state.dob,
                 Gender:this.state.gender,
                 Phone:this.state.phone,
@@ -72,10 +78,14 @@ export default class Form extends React.Component {
                 Doctor:this.state.doctor,
                 Disease:this.state.disease,
                 Date:new Date().toLocaleString(),
-                NextDate:this.state.nextDate
+                NextDate:this.state.nextDate,
+                Account:false
               }
+              let id = await uuidv4(data)
+              this.setState({id})
+              data={...data, id:this.state.id }
               console.log(data)
-                      Firebase.database().ref('/').push({
+              Firebase.database().ref('/Users/' + id ).set({
                         data
               })
               .then((doc) => {
@@ -96,15 +106,20 @@ export default class Form extends React.Component {
         console.log(this.state.phone)
         if (this.state.phone=== "" || this.state.phone=== null) {
           formIsValid = false;
-          // this.setState({ message: "*Please enter your mobile no."})
           this.notify("Please enter your mobile no.")
          
+        }else{
+          var pattern = new RegExp(/^[0-9\b]+$/) 
+          if (!pattern.test(this.state.phone)) {
+            formIsValid = false;
+            this.notify("Please enter valid phone number.")
+
+          }else if(this.state.phone.length !== 10){
+            formIsValid = false;
+            this.notify("Please enter valid phone number.")
+          }
+          return formIsValid;
         }
-        
-        
-        return formIsValid;
-  
-  
       }
   
   
@@ -183,7 +198,7 @@ export default class Form extends React.Component {
                     <CLabel htmlFor="number">Phone No.</CLabel>
                   </CCol>
                   <CCol xs="12" md="9">
-                    <CInput defaultValue={this.state.phone} onChange={e => {this.setState({ phone:e.target.value })}} type="tel" id="number" placeholder="+919876543210" required />
+                    <CInput defaultValue={this.state.phone} onChange={e => {this.setState({ phone:e.target.value })}} type="tel" id="number" placeholder="9876543210" required />
                   </CCol>
                 </CFormGroup>
                 <CFormGroup row>

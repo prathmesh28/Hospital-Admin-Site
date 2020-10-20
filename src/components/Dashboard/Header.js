@@ -1,29 +1,13 @@
 import React, { useState } from 'react'
 import {
-    CHeader,
     CToggler,
-    CHeaderBrand,
-    CHeaderNav,
-    CHeaderNavItem,
     CHeaderNavLink,
-    CSubheader,
-    CBreadcrumbRouter,
-    CLink,
     CNavbarBrand,
     CCollapse,
     CNavbarNav,
-    CNavLink,
     CNavbar,
-    CDropdownItem,
-    CDropdownMenu,
-    CDropdownToggle,
-    CDropdown,
-    CForm,
-    CInput,
-    CButton,
     CImg
   } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
 import Img from '../../assets/brand.jpg'
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)

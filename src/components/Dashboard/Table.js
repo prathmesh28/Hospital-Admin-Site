@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  CCollapse,
   CButton,
   CCard,
   CCardBody,
@@ -11,69 +10,38 @@ import {
   CForm,
   CInputGroupPrepend,
   CInputGroupText,
-  CBadge,
-  CFormGroup,
-  CLabel,
   CInputGroup,
   CInput,
-  CInputGroupAppend,
   CModal,
-  
   CModalHeader,
   CModalTitle,
   CModalBody,
   CModalFooter
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import usersData from './Data'
 import Firebase from '../../firebase'
 import _ from 'lodash';
-import { withRouter } from "react-router-dom";
 import { freeSet } from '@coreui/icons'
-
-  // const fields = [
-  //   { key: 'name', _style: { width: '40%'} },
-  //   'registered',
-  //   { key: 'role', _style: { width: '20%'} },
-  //   { key: 'status', _style: { width: '20%'} },
-  //   {
-  //     key: 'show_details',
-  //     label: '',
-  //     _style: { width: '1%' },
-  //     sorter: false,
-  //     filter: false
-  //   }
-  // ]
-
-  const fields = ['Name','Address', 'Date', 'Disease','Dob','Doctor', 'Email', 'Gender', 'NextDate', 'Phone', 'show_details']
+import { withRouter } from 'react-router-dom'
+const fields = ['Name','Address', 'Date', 'Disease','Dob','Doctor', 'Email', 'Gender', 'NextDate', 'Phone', 'Account']
 
 
-const getBadge = status => {
-    switch (status) {
-    case 'Active': return 'success'
-    case 'Inactive': return 'secondary'
-    case 'Pending': return 'warning'
-    case 'Banned': return 'danger'
-    default: return 'primary'
-    }
-}
 
 class Dashboard extends React.Component {
   constructor() {
     super();
   this.state = { 
     data:null,
-    details:[],
+  //  details:[],
     info: false,
     email:'',
-    password:''
+    password:'',
+    id: ''
   }
   }
 
   componentDidMount(){
-   // history = useHistory()
-
-    Firebase.database().ref('/').once("value",(item) => {
+    Firebase.database().ref('/Users/').once("value",(item) => {
          // console.log(item.val())
           const users = _.map( item.val(), (e) => {
             return e.data 
@@ -82,17 +50,20 @@ class Dashboard extends React.Component {
         })
   }
 
-  UserSignUP=() => {
-    
+  UserSignUP = () => {
+    //  Firebase.database().ref('/')
+    console.log(this.state.id)
      Firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
-     .then(userCredentials => {
-       console.log(userCredentials.user.uid)
-    this.props.history.push(`/User/${userCredentials.user.uid}`)
+     .then(async(userCredentials) => {
+       await Firebase.database().ref('/Users/'+this.state.id+'/data/').update({ Account:true,Email:this.state.email })
+       this.props.history.push(`/User/${this.state.id}`)
      }).catch((error)=>{console.error(error);})
   }
-  
+  pageNav=(item)=>{
+    this.props.history.push(`/User/${item.id}`)
+  }
    toggleDetails = (index) => {
-
+    this.setState({ id:index.id })
     if (index.Email===null||index.Email===""){
       let newDate = new Date()
       let d = newDate.getDate();
@@ -119,7 +90,7 @@ class Dashboard extends React.Component {
   render(){
 
     const data = this.state.data
-    const details = this.state.details
+   // const details = this.state.details
    
     
   return  (
@@ -213,7 +184,7 @@ class Dashboard extends React.Component {
               //         </CBadge>
               //       </td>
               //     ),
-                'show_details':
+                'Account':
                   (item, index)=>{
                     return (
                       <td className="py-2">
@@ -222,9 +193,9 @@ class Dashboard extends React.Component {
                           variant="outline"
                           shape="square"
                           size="sm"
-                          onClick={()=>{this.toggleDetails(item)}}
+                          onClick={index.Account? ()=>{this.pageNav(item)} : ()=>{this.toggleDetails(item)}}
                         >
-                          {details.includes(index) ? 'View' : 'Create'}
+                        {index.Account? 'View' : 'Create'}
                         </CButton>
                       </td>
                       )
@@ -262,4 +233,4 @@ class Dashboard extends React.Component {
   )
 }
 }
-export default Dashboard;
+export default withRouter(Dashboard);

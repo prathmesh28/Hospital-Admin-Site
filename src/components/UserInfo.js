@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import useUser from "../_hooks/useUser";
 import Dashboard from "./Dashboard/Dashboard"
 export default function UserInfo() {
-  const { isLoggedIn, userState } = useUser();
+  const { isLoggedIn } = useUser();
   return isLoggedIn() ? (
     <Dashboard/>
   ) : (

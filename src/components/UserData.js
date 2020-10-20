@@ -1,49 +1,50 @@
 import * as React from "react";
 import {
-    CCardGroup,
-    CCardFooter,
     CCol,
-    CLink,
     CRow,
-    CWidgetProgress,
     CWidgetIcon,
-    CWidgetProgressIcon,
-    CWidgetSimple,
-    CProgress,
     CCard,
     CCardHeader,
     CCardBody,
-    CFormGroup,
-    CLabel
   } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { freeSet } from '@coreui/icons'
-import { browserHistory } from "react-router";
+import ReactDOM from "react-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  useParams
+} from "react-router-dom";
+import { withRouter } from 'react-router-dom'
+import Firebase from "../firebase";
 
 class UserData extends React.Component{
+  state={
+    data:null
+  }
+  componentDidMount(){
+    const id = this.props.match.params.id;
+    console.log(id)
+    Firebase.database().ref('/Users/'+id).once("value",(item) => {
+      // console.log(item.val())
+       this.setState({ data:item.val() })
+     })
+  }
 render(){
-
+const data = this.state.data
   return(
-    <CRow>
+    <CRow style={{margin:10}}>
         <CCol xs="12" sm="12" md="4" lg="4">
-            <CCard>
-                <CCardBody>
-                <CWidgetIcon 
-                    //text="income" 
-                    header="UserName" color="info">
-                    <CIcon size={'lg'} 
-                    content={freeSet.cilUser} />
-                </CWidgetIcon>
-                <CRow >
-                  <CCol xs="6" sm="6" md="6" lg="6">
-                  </CCol>
-                  <CCol xs="6" sm="6" md="6" lg="6">
-                  <span className="h6">Age</span>
-                  </CCol>
-                </CRow>
-                {/* loop the row */}
-                </CCardBody>
-            </CCard>
+                      <CCard accentColor="primary">
+                        <CCardHeader>
+                         <h5> Full Name </h5> 
+                        </CCardHeader>
+                        <CCardBody>
+                          {console.log(data)}
+                          <p><b>Dob:</b> 12 34 45</p>
+                        </CCardBody>
+                      </CCard>
           
         </CCol>
         <CCol xs="12" sm="12" md="8" lg="8">
@@ -62,4 +63,4 @@ render(){
   );
 }
 }
-export default UserData
+export default  withRouter(UserData)

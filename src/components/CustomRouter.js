@@ -16,7 +16,7 @@ export default function CustomRouter() {
   const { isLoggedIn, loaded } = useUser();
 
   return (
-    <Router>
+    <Router >
        {!loaded ? null : isLoggedIn() ? (
         <Switch>
           <Route path="/logout">

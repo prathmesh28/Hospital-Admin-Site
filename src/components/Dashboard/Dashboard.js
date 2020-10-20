@@ -5,7 +5,6 @@ import {
   CButton,
   CCard,
   CCardBody,
-  CCardHeader,
   CCol,
   CModal,
   CModalBody,
@@ -67,9 +66,6 @@ return  (
             </CModal>
 
           </CCardBody>
-          <div>
-            <p>hi</p>
-          </div>
     </>
   
   )
