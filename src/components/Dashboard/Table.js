@@ -107,12 +107,12 @@ class Dashboard extends React.Component {
             >
               <CModalHeader closeButton>
               <CIcon size={'lg'} style={{paddingTop:3,}} content={freeSet.cilUser}/>
-                <CModalTitle> User Form</CModalTitle>
+                <CModalTitle>&nbsp; User Form</CModalTitle>
               </CModalHeader>
               <CModalBody>
               <CCardBody>
                   <CForm>
-                    <h4>User SignUP</h4>
+                    <h4>User Login Details</h4>
                     {/* <p className="text-muted">Sign In to your account</p> */}
                     <CInputGroup className="mb-3">
                       <CInputGroupPrepend>
@@ -132,9 +132,10 @@ class Dashboard extends React.Component {
            
                       <CInput type="text" value={this.state.password} />
                     </CInputGroup>
+                    <div>*Please note down email and password</div>
                     <CRow>
                       <CCol xs="6">
-                        <CButton color="primary" onClick={()=> this.UserSignUP()} className="px-4">Login</CButton>
+                        <CButton color="info" onClick={()=> this.UserSignUP()} className="px-4">Add User</CButton>
                       </CCol>
                       
                     </CRow>
@@ -149,21 +150,30 @@ class Dashboard extends React.Component {
             </CModal>
 
           </CCardBody>
-          <CCard>
+          <CCard borderColor="info">
 
-            <CCardHeader style={{alignSelf:'center'}}>
-            <span className="h5" >Users</span>
+            <CCardHeader color="info" style={{textAlign:'center'}}>
+            <span className="h5" style={{color:"#fff"}} >Users</span>
               
               
             </CCardHeader>
 
             <CCardBody>
+            {/* <CCol xs="12" sm="6" md="4">
+              <CCard color="success" className="text-white text-center">
+                <CCardBody>
+                  <blockquote className="card-bodyquote">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+                    <footer>Someone famous in <cite title="Source Title">Source Title</cite></footer>
+                  </blockquote>
+                </CCardBody>
+              </CCard>
+            </CCol> */}
             <CDataTable
               items={data}
               fields={fields}
               columnFilter
               tableFilter
-              footer
               itemsPerPageSelect
               itemsPerPage={5}
               hover
@@ -189,13 +199,13 @@ class Dashboard extends React.Component {
                     return (
                       <td className="py-2">
                         <CButton
-                          color="primary"
+                          color="info"
                           variant="outline"
                           shape="square"
                           size="sm"
-                          onClick={index.Account? ()=>{this.pageNav(item)} : ()=>{this.toggleDetails(item)}}
+                          onClick={item.Account? ()=>{this.pageNav(item)} : ()=>{this.toggleDetails(item)}}
                         >
-                        {index.Account? 'View' : 'Create'}
+                        {item.Account? 'View' : 'Create'}
                         </CButton>
                       </td>
                       )

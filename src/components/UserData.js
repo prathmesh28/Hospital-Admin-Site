@@ -6,6 +6,16 @@ import {
     CCard,
     CCardHeader,
     CCardBody,
+    CButton,
+    CModal,
+    CModalHeader,
+    CModalTitle,
+    CModalBody,
+    CModalFooter,
+    CForm,
+    CFormGroup,
+    CLabel,
+    CInputFile
   } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { freeSet } from '@coreui/icons'
@@ -18,48 +28,107 @@ import {
 } from "react-router-dom";
 import { withRouter } from 'react-router-dom'
 import Firebase from "../firebase";
-
+import _ from 'lodash';
+import { register } from './../serviceWorker';
+import Header from './Dashboard/Header'
 class UserData extends React.Component{
   state={
-    data:null
+    data:{},
+    edit:false,
+    Disease:'',
+    Doctor:''
   }
   componentDidMount(){
     const id = this.props.match.params.id;
     console.log(id)
     Firebase.database().ref('/Users/'+id).once("value",(item) => {
       // console.log(item.val())
-       this.setState({ data:item.val() })
+      // const users = _.map( item.val(), (e) => {
+      //   return e.data 
+      // })
+      // this.setState({ data:users})
+       this.setState({ data:item.val(), Disease: item.val().data['Disease'], Doctor: item.val().data['Doctor']})
      })
   }
 render(){
 const data = this.state.data
+const Disease = this.state.Disease
+const Doctor = this.state.Doctor
   return(
+    <>
+    <Header/>
     <CRow style={{margin:10}}>
         <CCol xs="12" sm="12" md="4" lg="4">
-                      <CCard accentColor="primary">
+                      <CCard accentColor="info">
                         <CCardHeader>
-                         <h5> Full Name </h5> 
+                         <h5> User Details </h5> 
                         </CCardHeader>
-                        <CCardBody>
-                          {console.log(data)}
-                          <p><b>Dob:</b> 12 34 45</p>
+
+                        {
+                          _.map( data, (e) => { 
+                            return (
+                              <>
+                            
+                            <CCardBody>
+                              
+                          <p style={{fontSize:15,lineHeight:2,letterSpacing:1}}><b >Name: </b> {e.Name}<br/>
+                          <b>Dob.: </b> {e.Dob}<br/>
+                          <b>Gender: </b> {e.Gender}<br/>
+                          <b>Phone: </b> {e.Phone}<br/>
+                          <b>Address: </b> {e.Address}<br/>
+                          <b>Email: </b> {e.Email}<br/>
+                          <b>Date Registered: </b> {e.Date}<br/>
+                          <b>Last Visit/Next Visit: </b> {e.NextDate}</p>
+                        
                         </CCardBody>
+
+                        </>
+                        )
+                          })
+                        }
+                         <CButton  color="info" onClick={() => this.setState({edit:true})} size="md">Edit User Details</CButton>
+
                       </CCard>
-          
+                      <CModal 
+                          show={this.state.edit} 
+                          onClose={() => this.setState({edit:false})}
+                          color="info"
+                          closeOnBackdrop={false}
+                        >
+                          <CModalHeader closeButton>
+                          <CIcon size={'lg'} style={{paddingTop:3,}} content={freeSet.cilUser}/>
+                            <CModalTitle> User Form</CModalTitle>
+                          </CModalHeader>
+                          <CModalBody>
+                           
+                          </CModalBody>
+                          <CModalFooter>
+                            <CButton color="secondary" onClick={() => this.setState({edit:false})}>Cancel</CButton>
+                          </CModalFooter>
+                    </CModal>
+
         </CCol>
         <CCol xs="12" sm="12" md="8" lg="8">
         <CCard>
             <CCardHeader>
-              Card title
+              {Disease}
             </CCardHeader>
             <CCardBody>
-              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut
-              laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation
-              ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+              <CForm className="form-horizontal">
+              <CFormGroup row>
+                  <CLabel col md="3" htmlFor="file-input">File input</CLabel>
+                  <CCol xs="12" md="9">
+                    <CInputFile id="file-input" name="file-input"/>
+                  </CCol>
+                  
+                </CFormGroup>
+                </CForm>
+                
             </CCardBody>
           </CCard>
         </CCol>
     </CRow>
+    </>
   );
 }
 }

@@ -12,8 +12,11 @@ import {
   CInputGroup,
   CInputGroupPrepend,
   CInputGroupText,
-  CRow
+  CRow,
+  CModal,
+  CModalBody
 } from '@coreui/react'
+import Loader from "react-loader";
 import CIcon from '@coreui/icons-react'
 import Enum from 'enum'
 import { freeSet } from '@coreui/icons'
@@ -29,6 +32,8 @@ export default function SignIn() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [errorResponse, setErrorResponse] = React.useState("");
+  const [loaded, setLoaded] = React.useState(false);
+  
 
   const clearError = () => {
     if (errorResponse !== "") {
@@ -58,9 +63,14 @@ export default function SignIn() {
   };
 
   const trySignIn = async () => {
-    Firebase.auth().signInWithEmailAndPassword(email, password).catch((err) => {
+    setLoaded(!loaded)
+    Firebase.auth().signInWithEmailAndPassword(email, password)
+    .then(async(userCredentials) => {
+      setLoaded(!loaded)
+    })
+    .catch((err) => {
       setPassword("");
-      
+      setLoaded(!loaded)
           setErrorResponse(err.message);
       
     });
@@ -94,6 +104,42 @@ export default function SignIn() {
          height: '100%', width: '100%',backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
               
         <CContainer >
+        <CModal 
+              show={loaded} 
+              onClose={() => setLoaded(!loaded)}
+              //color="info"
+              closeOnBackdrop={false}
+              
+              style={{height:'80vh',backgroundColor:'transparent',border:0}}
+              
+            >
+              
+              <Loader
+                loaded={!loaded}
+                lines={30}
+                length={40}
+                width={1}
+                radius={50}
+                corners={0}
+                rotate={0}
+                direction={1}
+                color="#3399ff"
+                speed={2}
+                trail={100}
+                fps= {120}
+                shadow={false}
+                hwaccel={false}
+                className="spinner"
+                zIndex={2e9}
+                top="50%"
+                left="50%"
+                scale={1.0}
+                loadedClassName="loadedContent"
+                position= {'absolute'}
+              />
+             
+            </CModal>
+        
         <CRow className="justify-content-center" >
           <CCol md="8">
             <CCardGroup style={{ zIndex:2,position: "relative" }}>

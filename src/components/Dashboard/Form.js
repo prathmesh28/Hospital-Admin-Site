@@ -279,7 +279,7 @@ export default class Form extends React.Component {
               </CForm>
             </CCardBody>
             <CCardFooter>
-              <CButton onClick={this.formSubmit} size="md" color="primary" ><CIcon content={freeSet.cilScrubber} /> Submit</CButton>
+              <CButton onClick={this.formSubmit} size="md" color="info" > Submit</CButton>
             </CCardFooter>
           </CCard>
           </CCol>
