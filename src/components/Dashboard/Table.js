@@ -41,7 +41,7 @@ class Dashboard extends React.Component {
   }
 
   componentDidMount(){
-    Firebase.database().ref('/Users/').once("value",(item) => {
+    Firebase.database().ref('/Users/').on("value",(item) => {
          // console.log(item.val())
           const users = _.map( item.val(), (e) => {
             return e.data 

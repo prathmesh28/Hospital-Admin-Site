@@ -21,7 +21,7 @@
     "react-editable-table": "^1.12.32",
     "react-loader": "^2.4.7",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.3",
+    "react-scripts": "^3.4.4",
     "react-toastify": "^6.0.9",
     "rxfire": "^3.13.5",
     "rxjs": "^6.6.3",
