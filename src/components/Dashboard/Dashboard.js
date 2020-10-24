@@ -64,7 +64,6 @@ return  (
                 <CButton color="secondary" onClick={() => setInfo(!info)}>Cancel</CButton>
               </CModalFooter>
             </CModal>
-
           </CCardBody>
     </>
   
