@@ -26,6 +26,7 @@ import { withRouter } from 'react-router-dom'
 import Firebase from "../../firebase";
 import _ from 'lodash';
 import Header from '../Dashboard/Header'
+import Data from './Data'
 import {toast} from 'react-toastify';  
 import 'react-toastify/dist/ReactToastify.css'; 
 toast.configure()
@@ -40,7 +41,7 @@ class UserData extends React.Component{
     Name:'',
     Dob:'',
     Phone:'',
-    Address:''
+    Address:'',
   }
   componentDidMount(){
     id = this.props.match.params.id;
@@ -62,7 +63,10 @@ class UserData extends React.Component{
   formSubmit = () => {
     console.log(this.state.Name)
                Firebase.database().ref('/Users/' + id + '/data/' ).update({
-                         Name:this.state.Name
+                         Name:this.state.Name,
+                         Dob:this.state.Dob,
+                         Phone:this.state.Phone,
+                         Address:this.state.Address
                })
                .then((doc) => {
                //  this.setState({message:'User Added'})
@@ -87,7 +91,7 @@ class UserData extends React.Component{
       <>
       <Header/>
       <CRow style={{margin:10}}>
-        <CCol xs="12" sm="12" md="4" lg="4">
+        <CCol xs="12" sm="12" md="12" lg="4">
           <CCard accentColor="info">
             <CCardHeader>
               <h5> User Details </h5> 
@@ -180,13 +184,13 @@ class UserData extends React.Component{
           </CModal>
         </CCol>
 
-        <CCol xs="12" sm="12" md="8" lg="8">
+        <CCol xs="12" sm="12" md="12" lg="8">
           <CCard>
             <CCardHeader>
-              {Disease}
+             <b> Patient Type: &nbsp;{Disease} </b>
             </CCardHeader>
             <CCardBody>
-              <CForm className="form-horizontal">
+              {/* <CForm className="form-horizontal">
               <CFormGroup row>
                   <CLabel col md="3" htmlFor="file-input">File input</CLabel>
                   <CCol xs="12" md="9">
@@ -194,7 +198,10 @@ class UserData extends React.Component{
                   </CCol>
                   
                 </CFormGroup>
-                </CForm>
+                </CForm> */}
+
+                
+                {/* <Data Userid={id}/> */}
                 
             </CCardBody>
           </CCard>
