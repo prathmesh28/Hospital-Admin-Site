@@ -40,6 +40,7 @@ export default class Form extends React.Component {
       disease: "",
       nextDate: null,
       message: "error",
+      PatientType:false,
     }
      this.formSubmit = this.formSubmit.bind(this);
   }
@@ -61,6 +62,7 @@ export default class Form extends React.Component {
       this.setTime();
     }.bind(this), 1000);
   }
+  
 
   formSubmit = async () => {
     
@@ -79,7 +81,7 @@ export default class Form extends React.Component {
                 Disease:this.state.disease,
                 Date:new Date().toLocaleString(),
                 NextDate:this.state.nextDate,
-                Account:false
+                isDisable:false
               }
               let id = await uuidv4(data)
               this.setState({id})
@@ -109,7 +111,7 @@ export default class Form extends React.Component {
           this.notify("Please enter your mobile no.")
          
         }
-        if (this.state.disease=== "" || this.state.disease=== null) {
+        if (this.state.disease=== "" || this.state.disease=== null || this.state.disease=== 'null') {
           formIsValid = false;
           this.notify("Please enter Patient Type.")
          
@@ -169,7 +171,7 @@ export default class Form extends React.Component {
                     <CLabel htmlFor="date-input">Date of birth:</CLabel>
                   </CCol>
                   <CCol xs="12" md="9">
-                    <CInput defaultValue={this.state.dob} onChange={e => {this.setState({ dob:e.target.value })}} type="date" id="date-input" name="date-input" placeholder="date" required/>
+                    <CInput defaultValue={this.state.dob} max={new Date().toISOString().substr(0,10)} onChange={e => {this.setState({ dob:e.target.value })}} type="date" id="Dob date-input" name="date-input" placeholder="date" required/>
                   </CCol>
                 </CFormGroup>
 
@@ -239,11 +241,11 @@ export default class Form extends React.Component {
                   </CCol>
                   <CCol xs="12" md="9">
                     <CSelect defaultValue={this.state.doctor} onChange={e => {this.setState({ doctor:e.target.value })}} 
-                      custom name="select" id="select">
+                      custom name="select" id="Doctor select">
                       <option value="0">Please select Doctor</option>
-                      <option value="1">Doctor #1</option>
-                      <option value="2">Doctor #2</option>
-                      <option value="3">Doctor #3</option>
+                      <option value="Doctor #1">Doctor #1</option>
+                      <option value="Doctor #2">Doctor #2</option>
+                      <option value="Doctor #3">Doctor #3</option>
                     </CSelect>
                   </CCol>
                 </CFormGroup>
@@ -254,20 +256,26 @@ export default class Form extends React.Component {
                     <CLabel htmlFor="select">Patient Type:</CLabel>
                   </CCol>
                   <CCol xs="12" md="9">
-                    <CSelect defaultValue={this.state.disease} onChange={e => {this.setState({ disease:e.target.value })}} custom name="select" id="select">
-                      <option value="">Please select Type</option>
+                    <CSelect defaultValue={this.state.disease} 
+                      onChange={e => {
+                        e.target.value === 'Other' ?this.setState({isDisable:false}):this.setState({isDisable:true})
+                        this.setState({ disease:e.target.value })
+
+                      }} 
+                      custom name="select" id="Patient select">
+                      <option >Please select Type</option>
                       <option value="Infant">Infant</option>
                       <option value="Pregnancy">Pregnancy</option>
-                      <option value="">Other</option>
+                      <option value="Other">Other</option>
                     </CSelect>
                   </CCol>
                 </CFormGroup>
-                <CFormGroup row>
+                <CFormGroup row >
                   <CCol md="3">
                   </CCol>
                   <CCol xs="12" md="9">
                     <CLabel htmlFor="select">Other:</CLabel>
-                    <CInput id="text-input" name="text-input" defaultValue={this.state.disease} onChange={e => {this.setState({ disease:e.target.value })}} required/>
+                    <CInput id="text-input" name="text-input" defaultValue={this.state.disease} onChange={e => {this.setState({ disease:e.target.value })}} disabled={this.state.isDisable}/>
                   </CCol>
                 </CFormGroup>
 
@@ -285,7 +293,7 @@ export default class Form extends React.Component {
                     <CLabel htmlFor="date-input">Next Visit:</CLabel>
                   </CCol>
                   <CCol xs="12" md="9">
-                    <CInput defaultValue={this.state.nextDate} onChange={e => {this.setState({ nextDate:e.target.value })}} type="date" id="date-input" name="date-input" placeholder="date" />
+                    <CInput defaultValue={this.state.nextDate} min={new Date().toISOString().substr(0,10)} onChange={e => {this.setState({ nextDate:e.target.value })}} type="date" id="Next date-input" name="date-input" placeholder="date" />
                   </CCol>
                 </CFormGroup>
 

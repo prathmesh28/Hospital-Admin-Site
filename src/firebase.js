@@ -2,6 +2,7 @@ import * as firebase from "firebase/app";
 
 import "firebase/auth";
 import "firebase/database"
+import 'firebase/storage'
 const firebaseConfig = {
   apiKey: "AIzaSyD6zJ2pO9N4e7OSuUi7vf-XQJ92hOlur6A",
   authDomain: "hospital-app-49c8b.firebaseapp.com",
@@ -15,6 +16,5 @@ const firebaseConfig = {
 const Firebase = firebase.initializeApp(firebaseConfig);
 
 // const auth = firebase.auth();
-
 //export Firebase
 export default Firebase

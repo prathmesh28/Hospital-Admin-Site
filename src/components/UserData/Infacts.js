@@ -14,84 +14,94 @@ import {
     CInputRadio,
     CLabel,
     CSelect,
+    CDataTable,
     CRow,
   } from '@coreui/react'
 import _ from 'lodash';
 import Firebase from '../../firebase'
-let weight={
-    jan:1,
-    feb:null,
-    mar:null,
-    apr:null,
-    may:null,
-    jun:null,
-    jul:null,
-    aug:null,
-    sep:null,
-    oct:null,
-    nov:null,
-    dec:null
-}
-let height={
-    jan:null,
-    feb:null,
-    mar:null,
-    apr:null,
-    may:null,
-    jun:null,
-    jul:null,
-    aug:null,
-    sep:null,
-    oct:null,
-    nov:null,
-    dec:null
-}
-let remarks={
-    jan:null,
-    feb:null,
-    mar:null,
-    apr:null,
-    may:null,
-    jun:null,
-    jul:null,
-    aug:null,
-    sep:null,
-    oct:null,
-    nov:null,
-    dec:null
-}
+import DatePicker from 'react-date-picker';
+const fields = [
+    { key: 'Date', _style: { width: '25%'} },
+    { key: 'Weight', _style: { width: '20%'} },
+    { key: 'Height', _style: { width: '20%'} },
+    { key: 'Remark', _style: { width: '35%'} }
+  ]
+  let id
 export default class Infant extends React.Component {
 
-    state={
-        height:height,
-        weight:weight,
-        remarks:remarks
+    constructor(props) {
+        super(props)
+        this.state = { 
+           history: null,
+           Date:new Date(),
+           Weight:"",
+           Height:"",
+           Remark:"",
+        }
+     }
+     componentDidUpdate(previousProps, previousState) {
+       if (previousProps.id !== this.props.id) {
+             id = this.props.id;
+       console.log(id)
+             Firebase.database().ref('/Users/'+id).on("value",(item) => {
+       console.log('data',item.val())
+          this.setState({ 
+            history: item.val().data['history']
+         })
+        })
+          }
     }
-  componentDidMount(){
-   
-  }
-
-  handleChange = (e,index,name,val) => {
     
-     
-     
-  }
-//this working
-//   Done=async()=>{
-//       console.log('hi')
-//       console.log(this.props.Userid)
-//       let id = await this.props.Userid
-//       Firebase.database().ref('/Users/' + id + '/data/').update({
-//        height,weight,remarks
-//         })
-//         .then((doc) => {
-//        console.log('done')
-//         })
-//         .catch((error) => {
-//         //this.notify(error)
-//         console.error(error);
-//         })
-//   }
+    
+    
+    addRow =()=> {
+         
+      if (this.state.history=== undefined||this.state.history===null){
+         let temp = this.state.Date.toLocaleString()
+         let history = [{ Date: temp, Weight: this.state.Weight, Height: this.state.Height, Remark: this.state.Remark }]
+         console.log("null",history)
+         this.setState({ history:history,Weight:"",Height:"",Remark:"" })
+    
+            Firebase.database().ref('/Users/' + id +'/data/').update({
+               history
+               })
+               .then((doc) => {
+               //  this.setState({message:'User Added'})
+            //   this.notify('user added')
+               console.log(doc)
+               //window.location.reload()
+               })
+               .catch((error) => {
+             //  this.notify(error)
+               console.error(error);
+               })
+    
+      }else{
+         var history = this.state.history
+         console.log(this.state.history)
+         history.push({ Date: this.state.Date, Weight: this.state.Weight, Height: this.state.Height, Remark: this.state.Remark })
+         console.log(history)
+         this.setState({history: history,Weight:"",Height:"",Remark:""})
+    
+    
+        Firebase.database().ref('/Users/' + id +'/data/').update({
+         history
+         })
+         .then((doc) => {
+         //  this.setState({message:'User Added'})
+      //   this.notify('user added')
+         console.log(doc)
+         //window.location.reload()
+         })
+         .catch((error) => {
+       //  this.notify(error)
+         console.error(error);
+         })
+    
+      }
+       
+    }
+
     render(){
   return  (
       <CRow>
@@ -99,84 +109,74 @@ export default class Infant extends React.Component {
           <CCard borderColor="info">
 
         <CCardHeader color="info" style={{textAlign:'center'}}>
-        <span className="h5" style={{color:"#fff"}} >One year baby growth chart</span>
+        <span className="h5" style={{color:"#fff"}} >Baby growth chart</span>
 
 
         </CCardHeader>
-
+      
+       
         <CCardBody>
-          <div class="table-responsive">
-            <table className="table table-hover ">
-            <thead>
-            <tr>
-                <th scope="col">Month</th>
-                <th scope="col">Jan</th>
-                <th scope="col">Feb</th>
-                <th scope="col">Mar</th>
-                <th scope="col">Apr</th>
-                <th scope="col">May</th>
-                <th scope="col">June</th>
-                <th scope="col">July</th>
-                <th scope="col">Aug</th>
-                <th scope="col">Spt</th>
-                <th scope="col">Oct</th>
-                <th scope="col">Nov</th>
-                <th scope="col">Dec</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <th scope="row">Weight</th>
-                
-                {_.map( this.state.weight, (e,index) => {
-                    return (<td>
-                        <input 
-                            onChange={(itm) => this.handleChange(e,index, itm.target.value)} 
-                            type='text' 
-                            className='form-control' 
-                            step='1' min="1"
-                            value={e}
-                        />
-                        </td>)})}
-            </tr>
-            <tr>
-                <th scope="row">Height</th>
-                
-                {_.map( height, (e) => {
-                    return (<td>
-                        <input 
-                            //onChange={(e) => this.handleChange(index, 'qty', e.target.value)} 
-                            type='text' 
-                            className='form-control' 
-                            step='1' min="1"
-                            value={e}
-                        />
-                        </td>)})}
-                
-            </tr>
-            <tr>
-                <th scope="row">Remarks</th>
-                
-                {_.map( remarks, (e) => {
-                    return (<td>
-                        <input 
-                            //onChange={(e) => this.handleChange(index, 'qty', e.target.value)} 
-                            type='text' 
-                            className='form-control' 
-                            step='1' min="1"
-                            value={e}
-                        />
-                        </td>)})}
-                
-            </tr>
-            </tbody>
-        </table>
-        </div>
-        </CCardBody>
-        <CCardFooter>
-        <CButton color="info" onClick={this.Done}>submit</CButton>
 
-        </CCardFooter>
+
+
+<CDataTable
+      items={this.state.history}
+      fields={fields}
+      itemsPerPage={5}
+      pagination
+      scopedSlots = {{
+        'Date':
+        (item, index)=>(
+            <td>
+              
+             
+              <DatePicker
+                   value={item.Date}
+                   format="dd-MM-y"
+                   disabled={true}
+                //   onChange={item.Date}
+             />
+            </td>
+          )
+
+      }}
+    />
+
+        <table id='Data' className="table table-hover ">
+       <tbody>
+          <tr>
+             <td>
+             <DatePicker
+                   value={this.state.Date}
+                   format="dd-MM-y"
+                   
+                   onChange={(value) => this.setState({Date:value})}
+             />
+             </td>
+             <td>
+                <input type="text" class="form-control" id="report" 
+                defaultValue={this.state.Weight} onChange={e => {this.setState({ Weight:e.target.value })}}/>
+             </td>
+             <td>
+                <input type="text" class="form-control" id="Height"
+                defaultValue={this.state.Height} onChange={e => {this.setState({ Height:e.target.value })}}/>
+             </td>
+             <td>
+             <input type="text" class="form-control" id="Remarks" placeholder="Remarks"
+             defaultValue={this.state.Remark} onChange={e => {this.setState({ Remark:e.target.value })}}/>
+             </td>
+          </tr>
+       </tbody>
+    </table>
+
+
+
+
+</CCardBody>
+<CCardFooter>
+<CButton color="info" onClick={()=>this.addRow()}>Add</CButton>
+
+</CCardFooter>
         </CCard>
   </CCol>
   

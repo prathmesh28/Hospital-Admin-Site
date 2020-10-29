@@ -21,12 +21,13 @@ import {
   } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { freeSet } from '@coreui/icons'
-
+import Infant from './Infacts'
+import Pregnancy from './Pregnancy'
+import Others from './Others'
 import { withRouter } from 'react-router-dom'
 import Firebase from "../../firebase";
 import _ from 'lodash';
 import Header from '../Dashboard/Header'
-import Data from './Data'
 import {toast} from 'react-toastify';  
 import 'react-toastify/dist/ReactToastify.css'; 
 toast.configure()
@@ -42,10 +43,12 @@ class UserData extends React.Component{
     Dob:'',
     Phone:'',
     Address:'',
+    id:null
   }
   componentDidMount(){
     id = this.props.match.params.id;
     console.log(id)
+    this.setState({id})
     Firebase.database().ref('/Users/'+id).on("value",(item) => {
    
        this.setState({ 
@@ -83,10 +86,30 @@ class UserData extends React.Component{
        notify = (e)=>{  
         toast(e)  
       } 
+
+
+      
+
+
+
   render(){
     const data = this.state.data
     const Disease = this.state.Disease
     const Doctor = this.state.Doctor
+
+    let renderData
+
+    if (this.state.Disease === 'Infant'){
+      renderData= <Infant/>
+    }
+    
+    else if (this.state.Disease === 'Pregnancy'){
+      renderData= <Pregnancy/>
+    }
+    else{
+      renderData= <Others id={this.state.id}/>
+    }
+    
     return(
       <>
       <Header/>
@@ -117,6 +140,31 @@ class UserData extends React.Component{
             <CButton  color="info" onClick={() => this.setState({edit:true})} size="md">Edit User Details</CButton>
 
           </CCard>
+
+          <CCard accentColor="info">
+            {/* <CCardHeader>
+              <h5> User Details </h5> 
+            </CCardHeader> */}
+            
+            {
+              _.map( data, (e) => {
+                return (
+                  <>
+                  <CCardBody>
+                    <p style={{fontSize:15,lineHeight:2,letterSpacing:1}}><b >Doctor: </b> {e.Doctor}<br/>
+                    <b>Patient Type: </b> {e.Disease}<br/>
+                    <b>Next Visit: </b> {e.NextDate}</p>
+                  </CCardBody>
+                  </>
+                )
+              })
+            }
+            
+            {/* <CButton  color="info" onClick={() => this.setState({edit:true})} size="md">Edit User Details</CButton> */}
+
+          </CCard>
+
+
           <CModal 
               show={this.state.edit} 
               onClose={() => this.setState({edit:false})}
@@ -190,18 +238,10 @@ class UserData extends React.Component{
              <b> Patient Type: &nbsp;{Disease} </b>
             </CCardHeader>
             <CCardBody>
-              {/* <CForm className="form-horizontal">
-              <CFormGroup row>
-                  <CLabel col md="3" htmlFor="file-input">File input</CLabel>
-                  <CCol xs="12" md="9">
-                    <CInputFile id="file-input" name="file-input"/>
-                  </CCol>
-                  
-                </CFormGroup>
-                </CForm> */}
 
-                
-                {/* <Data Userid={id}/> */}
+            {renderData}
+              
+                {/* <Data Userid={id} Disease={Disease}/> */}
                 
             </CCardBody>
           </CCard>
