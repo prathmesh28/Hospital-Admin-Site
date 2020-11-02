@@ -190,17 +190,14 @@ class Doctors extends React.Component{
               return (
               <CCollapse show={this.state.details.includes(index)}>
                 <CCardBody>
-                  <h4>
-                    {item.gender}
-                  </h4>
+                  
                   <p className="text-muted">User since: {item.registered}</p>
                   
                   <CButton size="sm" color="danger" className="ml-1"
                     onClick={()=>{
-                      console.log(item.gender)
-                        //  let userRef = Firebase.database().ref('Doctors/' + item.id)
-                        //  userRef.remove()
-                        // console.log(userRef)
+                         let userRef = Firebase.database().ref('Doctors/' + item.id)
+                         userRef.remove()
+                        console.log(userRef)
 
                     }}>
                     Delete
