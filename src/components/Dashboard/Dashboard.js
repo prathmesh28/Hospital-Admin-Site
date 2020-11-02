@@ -15,6 +15,7 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { freeSet } from '@coreui/icons'
+import { Link } from "react-router-dom";
 
 import Form from './Form'
 export default function Dashboard() {
@@ -36,7 +37,13 @@ return  (
             <CCol col="4" sm="4" md="2" xl className="col-xs-12 col-sm-6 col-md-3 col-lg-3">
               <CButton color="info" variant='outline' onClick={() => setInfo(!info)} size="lg">Add new User</CButton>
             </CCol>
-
+            <CCol col="4" sm="4" md="2" xl className="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+              <Link to="/Doctors"><CButton color="info" 
+                size="lg">Doctors</CButton></Link>
+              
+            </CCol>
+            
+            
             <CCol col="3" sm="3" md="2" style={{alignSelf:'flex-end',margin:20}} className="col-xs-12 col-sm-6 col-md-3 col-lg-3">
               {time}            
             </CCol>

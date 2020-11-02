@@ -6,25 +6,26 @@ import {
     CCardBody,
     CCardFooter,
     CCol,
-    CForm,
-    CFormGroup,
-    CFormText,
-    CTextarea,
-    CInput,
-    CInputRadio,
-    CLabel,
-    CSelect,
     CDataTable,
     CRow,
   } from '@coreui/react'
 import _ from 'lodash';
 import Firebase from '../../firebase'
 import DatePicker from 'react-date-picker';
+
+import { v4 as uuidv4 } from 'uuid';
 const fields = [
     { key: 'Date', _style: { width: '25%'} },
     { key: 'Weight', _style: { width: '20%'} },
     { key: 'Height', _style: { width: '20%'} },
-    { key: 'Remark', _style: { width: '35%'} }
+    { key: 'Remark', _style: { width: '35%'} },
+    {
+      key: 'Delete',
+      label: '',
+      _style: { width: '1%' },
+      sorter: false,
+      filter: false
+    }
   ]
   let id
 export default class Infant extends React.Component {
@@ -37,68 +38,61 @@ export default class Infant extends React.Component {
            Weight:"",
            Height:"",
            Remark:"",
+           newid:""
         }
      }
-     componentDidUpdate(previousProps, previousState) {
-       if (previousProps.id !== this.props.id) {
-             id = this.props.id;
-       console.log(id)
-             Firebase.database().ref('/Users/'+id).on("value",(item) => {
-       console.log('data',item.val())
-          this.setState({ 
-            history: item.val().data['history']
-         })
-        })
-          }
-    }
+     componentDidMount(){
+         id = this.props.id;
+   console.log('infacts',id)
+    
+
+    Firebase.database().ref('/Users/'+id +'/data/history/').on("value",(item) => {
+
+      const history = _.map( item.val(), (e) => {
+         return e.sethistory
+      })
+      console.log('data',history)
+      this.setState({ history })
+   })
+     }
+  
+          
     
     
     
-    addRow =()=> {
+    
+    addRow =async()=> {
          
-      if (this.state.history=== undefined||this.state.history===null){
          let temp = this.state.Date.toLocaleString()
-         let history = [{ Date: temp, Weight: this.state.Weight, Height: this.state.Height, Remark: this.state.Remark }]
-         console.log("null",history)
-         this.setState({ history:history,Weight:"",Height:"",Remark:"" })
+         let sethistory = { 
+            Date: temp, 
+            Weight: this.state.Weight, 
+            Height: this.state.Height, 
+            Remark: this.state.Remark 
+         }
+         
+         let newid = await uuidv4(sethistory)
+
+         this.setState({ Weight:"",Height:"",Remark:"", newid })
+         sethistory={...sethistory, newid:this.state.newid }
+         console.log(sethistory)
     
-            Firebase.database().ref('/Users/' + id +'/data/').update({
-               history
-               })
-               .then((doc) => {
-               //  this.setState({message:'User Added'})
-            //   this.notify('user added')
-               console.log(doc)
-               //window.location.reload()
-               })
-               .catch((error) => {
-             //  this.notify(error)
-               console.error(error);
-               })
+         Firebase.database().ref('/Users/' + id +'/data/history/'+newid).set({
+            sethistory
+              })
+              .then((doc) => {
+              //  this.setState({message:'User Added'})
+           //   this.notify('user added')
+              console.log(doc)
+              //window.location.reload()
+              })
+              .catch((error) => {
+            //  this.notify(error)
+              console.error(error);
+              })
+   
     
-      }else{
-         var history = this.state.history
-         console.log(this.state.history)
-         history.push({ Date: this.state.Date, Weight: this.state.Weight, Height: this.state.Height, Remark: this.state.Remark })
-         console.log(history)
-         this.setState({history: history,Weight:"",Height:"",Remark:""})
-    
-    
-        Firebase.database().ref('/Users/' + id +'/data/').update({
-         history
-         })
-         .then((doc) => {
-         //  this.setState({message:'User Added'})
-      //   this.notify('user added')
-         console.log(doc)
-         //window.location.reload()
-         })
-         .catch((error) => {
-       //  this.notify(error)
-         console.error(error);
-         })
-    
-      }
+     
        
     }
 
@@ -137,7 +131,32 @@ export default class Infant extends React.Component {
                 //   onChange={item.Date}
              />
             </td>
-          )
+          ),
+          'Delete':
+            (item, index)=>{
+               return (
+               <td className="py-2">
+
+                  <CButton size="sm" color="danger" className="ml-1"
+                     onClick={async()=>{
+
+                     // console.log(index)
+                        var r = await window.confirm("Table entry of date: " + item.Date +" will be deleted");
+                        if (r == true) {
+                           let userRef = Firebase.database().ref('Users/' + id +'/data/history/'+item.newid)
+                           userRef.remove()
+                        } else {
+                           
+                        }
+
+
+
+                     }}>
+                     Delete
+                     </CButton>
+               </td>
+               )
+            },
 
       }}
     />
@@ -154,16 +173,16 @@ export default class Infant extends React.Component {
              />
              </td>
              <td>
-                <input type="text" class="form-control" id="report" 
-                defaultValue={this.state.Weight} onChange={e => {this.setState({ Weight:e.target.value })}}/>
+                <input type="text" class="form-control" id="Weight" placeholder="Weight"
+                value={this.state.Weight} onChange={e => {this.setState({ Weight:e.target.value })}}/>
              </td>
              <td>
-                <input type="text" class="form-control" id="Height"
-                defaultValue={this.state.Height} onChange={e => {this.setState({ Height:e.target.value })}}/>
+                <input type="text" class="form-control" id="Height" placeholder="Height"
+                value={this.state.Height} onChange={e => {this.setState({ Height:e.target.value })}}/>
              </td>
              <td>
              <input type="text" class="form-control" id="Remarks" placeholder="Remarks"
-             defaultValue={this.state.Remark} onChange={e => {this.setState({ Remark:e.target.value })}}/>
+             value={this.state.Remark} onChange={e => {this.setState({ Remark:e.target.value })}}/>
              </td>
           </tr>
        </tbody>

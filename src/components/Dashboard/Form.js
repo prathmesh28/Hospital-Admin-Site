@@ -19,6 +19,8 @@ import CIcon from '@coreui/icons-react'
 import Firebase from '../../firebase'
 import { freeSet } from '@coreui/icons'
 import { v4 as uuidv4 } from 'uuid';
+import _ from 'lodash';
+
 import {toast} from 'react-toastify';  
 import 'react-toastify/dist/ReactToastify.css'; 
 toast.configure()
@@ -41,6 +43,7 @@ export default class Form extends React.Component {
       nextDate: null,
       message: "error",
       PatientType:false,
+      doctors:null
     }
      this.formSubmit = this.formSubmit.bind(this);
   }
@@ -58,6 +61,17 @@ export default class Form extends React.Component {
     this.setTime();
   }
   componentDidMount(){
+    Firebase.database().ref('/Doctors/').on("value",(item) => {
+      // console.log(item.val())
+       const doctors = _.map( item.val(), (e) => {
+         return e.data.name 
+       })
+       console.log(doctors)
+
+       this.setState({ doctors })
+     })
+     //console.log(doctors)
+
       window.setInterval(function () {
       this.setTime();
     }.bind(this), 1000);
@@ -111,6 +125,11 @@ export default class Form extends React.Component {
           this.notify("Please enter your mobile no.")
          
         }
+        if (this.state.dob=== "" || this.state.dob=== null) {
+          formIsValid = false;
+          this.notify("Please enter Date of birth.")
+         
+        }
         if (this.state.disease=== "" || this.state.disease=== null || this.state.disease=== 'null') {
           formIsValid = false;
           this.notify("Please enter Patient Type.")
@@ -141,11 +160,12 @@ export default class Form extends React.Component {
 
     render(){
 
-      //Add alert on error
+      const doctors=this.state.doctors
       //Add check internet connection alert
     
   return  (
 
+   
     
 
 <CRow>
@@ -239,15 +259,14 @@ export default class Form extends React.Component {
                   <CCol md="3">
                     <CLabel htmlFor="select">Doctor:</CLabel>
                   </CCol>
+                  {doctors?
                   <CCol xs="12" md="9">
                     <CSelect defaultValue={this.state.doctor} onChange={e => {this.setState({ doctor:e.target.value })}} 
                       custom name="select" id="Doctor select">
-                      <option value="0">Please select Doctor</option>
-                      <option value="Doctor #1">Doctor #1</option>
-                      <option value="Doctor #2">Doctor #2</option>
-                      <option value="Doctor #3">Doctor #3</option>
+                        <option >Please select Doctor</option>
+                      {doctors.map((x,y) => <option key={y} value={x}>{x}</option>)}
                     </CSelect>
-                  </CCol>
+                  </CCol>:<CCol xs="12" md="9">No Doctor Found</CCol>}
                 </CFormGroup>
                 
 

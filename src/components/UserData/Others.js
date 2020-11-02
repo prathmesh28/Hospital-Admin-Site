@@ -12,7 +12,23 @@ import {
 import _ from 'lodash';
 import Firebase from '../../firebase'
 import DatePicker from 'react-date-picker';
-const fields = ['Date','Report', 'Prescription', 'Remark']
+import FileUploader from "react-firebase-file-uploader";
+import { v4 as uuidv4 } from 'uuid';
+
+
+const fields = [
+   { key: 'Date', _style: { width: '25%'} },
+   { key: 'Report', _style: { width: '20%'} },
+   { key: 'Prescription', _style: { width: '20%'} },
+   { key: 'Remark', _style: { width: '35%'} },
+   {
+    key: 'Delete',
+    label: '',
+    _style: { width: '1%' },
+    sorter: false,
+    filter: false
+  }
+ ]
 let id
 export default class Others extends React.Component {
   constructor(props) {
@@ -23,97 +39,129 @@ export default class Others extends React.Component {
        Report:"",
        Prescription:"",
        Remark:"",
-       files:null
+       files:null,
+
+       reportAvatar: "",
+       reportIsUploading: false,
+       reportProgress: 0,
+       reportAvatarURL: "",
+
+       PrescriptionAvatar: "",
+       PrescriptionIsUploading: false,
+       PrescriptionProgress: 0,
+       PrescriptionAvatarURL: "",
+
+       newid:""
+
     }
  }
- componentDidUpdate(previousProps, previousState) {
-   if (previousProps.id !== this.props.id) {
-         id = this.props.id;
+ componentDidMount(){
+   id = this.props.id;
    console.log(id)
-         Firebase.database().ref('/Users/'+id).on("value",(item) => {
-   console.log('data',item.val())
-      this.setState({ 
-        history: item.val().data['history']
-     })
-    })
-      }
-}
+   Firebase.database().ref('/Users/'+id +'/data/history/').on("value",(item) => {
 
-handleChange=(files)=>{
-   this.setState({
-      files:files
-   })
-}
-
-handleSave=()=>{
-   let bucketName = 'images'
-   let file = this.state.files[0] //adding 1 file
- //  var ref = firebase.storage().ref().child(uid+ '/' + imageName)
-   let storageRef = Firebase.storage().ref(`${bucketName}/${file.name}`)
-   let uploadTask = storageRef.put(file)
-   uploadTask.on(Firebase.storage.TaskEvent.STATE_CHANGED,
-      ()=>{
-         let downloadURL = uploadTask.snapshot.downloadURL
-         console.log('check',downloadURL)
+      const history = _.map( item.val(), (e) => {
+         return e.sethistory
       })
-}
-
-showImage=()=>{
-   let storageRef = Firebase.storage().ref()
-   let spaceRef = storageRef.child('images/'+this.state.files[0].name)
-   storageRef.child('images/'+this.state.files[0].name).getDownloadURL().then((url)=>{
-      console.log(url)
-      document.getElementById('new-img').src=url
+      console.log('data',history)
+      this.setState({ history })
    })
-}
+ }
 
-  addRow =()=> {
+
+
+  addRow =async()=> {
      
-   if (this.state.history=== undefined||this.state.history===null){
       let temp = this.state.Date.toLocaleString()
-      let history = [{ Date: temp, Report: this.state.Report, Prescription: this.state.Prescription, Remark: this.state.Remark }]
-      console.log("null",history)
-      this.setState({ history:history,Report:"",Prescription:"",Remark:"" })
+      let sethistory = { 
+         Date: temp, 
+         Report: this.state.Report,
+         reportAvatarURL: this.state.reportAvatarURL, 
+         Prescription: this.state.Prescription,
+         PrescriptionAvatarURL: this.state.PrescriptionAvatarURL, 
+         Remark: this.state.Remark 
+      }
 
-         Firebase.database().ref('/Users/' + id +'/data/').update({
-            history
-            })
-            .then((doc) => {
-            //  this.setState({message:'User Added'})
-         //   this.notify('user added')
-            console.log(doc)
-            //window.location.reload()
-            })
-            .catch((error) => {
-          //  this.notify(error)
-            console.error(error);
-            })
+      let newid = await uuidv4(sethistory)
+      this.setState({ 
+         newid,
+         Report:"", 
+         Prescription:"",
+         Remark:"",
+         reportAvatar: "",
+         reportIsUploading: false,
+         reportProgress: 0,
+         reportAvatarURL: "",
+         PrescriptionAvatar: "",
+         PrescriptionIsUploading: false,
+         PrescriptionProgress: 0,
+         PrescriptionAvatarURL: "",
+       })
 
-   }else{
-      var history = this.state.history
-      console.log(this.state.history)
-      history.push({ Date: this.state.Date, Report: this.state.Report, Prescription: this.state.Prescription, Remark: this.state.Remark })
-      console.log(history)
-      this.setState({history: history,Report:"",Prescription:"",Remark:""})
-
-
-     Firebase.database().ref('/Users/' + id +'/data/').update({
-      history
-      })
-      .then((doc) => {
-      //  this.setState({message:'User Added'})
-   //   this.notify('user added')
-      console.log(doc)
-      //window.location.reload()
-      })
-      .catch((error) => {
-    //  this.notify(error)
-      console.error(error);
-      })
-
-   }
+       sethistory={...sethistory, newid:this.state.newid }
+      console.log(sethistory)
+        Firebase.database().ref('/Users/' + id +'/data/history/'+newid).set({
+         sethistory
+           })
+           .then((doc) => {
+           //  this.setState({message:'User Added'})
+        //   this.notify('user added')
+           console.log(doc)
+           //window.location.reload()
+           })
+           .catch((error) => {
+         //  this.notify(error)
+           console.error(error);
+           })
     
 }
+
+
+
+
+
+
+reportHandleUploadStart = (one) => {
+   this.setState({ reportIsUploading: true, reportProgress: 0, Report:one.name })
+}
+reportHandleProgress = reportProgress => this.setState({ reportProgress });
+  reportHandleUploadError = error => {
+    this.setState({ reportIsUploading: false });
+    console.error(error);
+  };
+  reportHandleUploadSuccess = filename => {
+    this.setState({ reportAvatar: filename, reportProgress: 100, reportIsUploading: false });
+    Firebase
+      .storage()
+      .ref(id+"/report/")
+      .child(filename)
+      .getDownloadURL()
+      .then(url => this.setState({ reportAvatarURL: url }));
+  };
+
+
+
+
+  
+PrescriptionHandleUploadStart = (one) => {
+   this.setState({ PrescriptionIsUploading: true, PrescriptionProgress: 0, Prescription:one.name })
+}
+PrescriptionHandleProgress = PrescriptionProgress => this.setState({ PrescriptionProgress });
+  PrescriptionHandleUploadError = error => {
+    this.setState({ PrescriptionIsUploading: false });
+    console.error(error);
+  };
+  PrescriptionHandleUploadSuccess = filename => {
+    this.setState({ PrescriptionAvatar: filename, PrescriptionProgress: 100, PrescriptionIsUploading: false });
+   
+    Firebase
+      .storage()
+      .ref(id+"/Prescription/")
+      .child(filename)
+      .getDownloadURL()
+      .then(url => this.setState({ PrescriptionAvatarURL: url }));
+  };
+
 
     render(){
   return  (
@@ -148,7 +196,69 @@ showImage=()=>{
                         //   onChange={item.Date}
                      />
                     </td>
-                  )
+                  ),
+                  'Delete':
+                     (item, index)=>{
+                        return (
+                        <td className="py-2">
+
+                           <CButton size="sm" color="danger" className="ml-1"
+                              onClick={async()=>{
+                                  var r = await window.confirm("Table entry of date: " + item.Date +" will be deleted");
+                                 if (r == true) {
+                                    let userRef = Firebase.database().ref('Users/' + id +'/data/history/'+item.newid)
+                                    userRef.remove()
+
+
+                                    let imagePathOne = item.reportAvatarURL
+                                    let imagePathTwo = item.PrescriptionAvatarURL
+
+
+                                    _.times(2, (index,item) => {
+                                       console.log(index)
+                                       let imagePath
+                                       index===0?imagePath=imagePathOne:imagePath=imagePathTwo
+                                       imagePath = imagePath.replace("%2F","/");
+                                       let indexOfEndPath = imagePath.indexOf("?");
+                                       imagePath = imagePath.substring(0,indexOfEndPath);
+                                       imagePath = imagePath.replace("%2F","/");
+
+                                       let indexPath = imagePath.indexOf("/o/");
+                                       imagePath = imagePath.substring(indexPath);
+                                       imagePath = imagePath.substring(3);
+
+                                       console.log(imagePath) 
+                                       
+
+                                       var storage = Firebase.storage();
+
+                                       var storageRef = storage.ref();
+
+                                       var desertRef = storageRef.child(imagePath);
+
+                                       // Delete the file
+                                       desertRef.delete().then(function() {
+                                       // File deleted successfully
+                                       }).catch(function(error) {
+                                          console.log(error)
+                                       });
+
+                                      
+                                     });
+
+                                    
+
+                                
+                                 } else {
+                                  
+                                 }
+
+                              }}>
+                              Delete
+                              </CButton>
+                        </td>
+                        )
+                     },
 
               }}
             />
@@ -165,17 +275,50 @@ showImage=()=>{
                      />
                      </td>
                      <td>
-                        <input type="file" class="form-control-file" id="file1" 
-                       // defaultValue={this.state.Report} 
-                        onChange={(e)=>{this.handleChange(e.target.files)}}/>
+                       
+                        {this.state.reportIsUploading && <p>Progress: {this.state.reportProgress}</p>}
+                        {this.state.reportAvatarURL && <img width={50} height={50} src={this.state.reportAvatarURL} />}
+                        <FileUploader
+                           id="Report"
+                           style={{display:'none'}}
+                           accept="file_extension"
+                           name="reportAvatar"
+                           randomizeFilename
+                           key={this.state.Report}
+                       //    defaultValue={this.state.Report}
+                           storageRef={Firebase.storage().ref(id+"/report/")}
+                           onUploadStart={this.reportHandleUploadStart}
+                           onUploadError={this.reportHandleUploadError}
+                           onUploadSuccess={this.reportHandleUploadSuccess}
+                           onProgress={this.reportHandleProgress}
+                        />
+                        <label for="Report">{this.state.Report===""?"Click to upload":this.state.Report}</label>
+
+
                      </td>
                      <td>
-                        <input type="file" class="form-control-file" id="file2"
-                        defaultValue={this.state.Prescription} onChange={e => {this.setState({ Prescription:e.target.value })}}/>
+                     {this.state.PrescriptionIsUploading && <p>Progress: {this.state.PrescriptionProgress}</p>}
+                        {this.state.PrescriptionAvatarURL && <img width={50} height={50} src={this.state.PrescriptionAvatarURL} />}
+                        
+                        <FileUploader
+                           id="Prescription"
+                           style={{display:'none'}}
+                           accept="file_extension"
+                           name="PrescriptionAvatar"
+                           randomizeFilename
+                           key={this.state.Prescription}
+                      //     defaultValue={this.state.Prescription}
+                           storageRef={Firebase.storage().ref(id+"/Prescription/")}
+                           onUploadStart={this.PrescriptionHandleUploadStart}
+                           onUploadError={this.PrescriptionHandleUploadError}
+                           onUploadSuccess={this.PrescriptionHandleUploadSuccess}
+                           onProgress={this.PrescriptionHandleProgress}
+                        />
+                        <label for="Prescription">{this.state.Prescription===""?"Click to upload":this.state.Prescription}</label>
                      </td>
                      <td>
                      <input type="text" class="form-control" id="Remarks" placeholder="Remarks"
-                     defaultValue={this.state.Remark} onChange={e => {
+                     value={this.state.Remark} onChange={e => {
                         this.setState({ Remark:e.target.value })
                         console.log(e.target.value)
                         }}/>
@@ -184,10 +327,7 @@ showImage=()=>{
                </tbody>
             </table>
 
-      //      use import FileUploader from "react-firebase-file-uploader";
-{/* <button onClick={this.handleSave}>Save</button>
-<button onClick={this.showImage}>show</button>
-<img id="new-img"/> */}
+
             </CCardBody>
 <CCardFooter>
 <CButton color="info" onClick={()=>this.addRow()}>Add</CButton>
@@ -195,6 +335,10 @@ showImage=()=>{
 </CCardFooter>
         </CCard>
         </div>
+
+       
+          
+
   </CCol>
   
   </CRow>

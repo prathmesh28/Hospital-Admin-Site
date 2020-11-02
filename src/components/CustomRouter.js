@@ -11,6 +11,7 @@ import SignIn from "./SignIn";
 import Logout from "./Logout";
 import useUser from "../_hooks/useUser";
 import UserData from "./UserData/UserData"
+import Doctors from "./Doctors/Doctors"
 export default function CustomRouter() {
   // useUser is a custom hook (src/_hooks/useUser.tsx)
   const { isLoggedIn, loaded } = useUser();
@@ -31,6 +32,9 @@ export default function CustomRouter() {
           </Route>
           <Route path="/User/:id">
             <UserData/>
+          </Route>
+          <Route path="/Doctors">
+            <Doctors/>
           </Route>
           <Route path="/">
             <Redirect to="/Dashboard"></Redirect>

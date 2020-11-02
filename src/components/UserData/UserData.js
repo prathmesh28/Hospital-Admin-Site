@@ -28,6 +28,7 @@ import { withRouter } from 'react-router-dom'
 import Firebase from "../../firebase";
 import _ from 'lodash';
 import Header from '../Dashboard/Header'
+import Loader from 'react-loader';
 import {toast} from 'react-toastify';  
 import 'react-toastify/dist/ReactToastify.css'; 
 toast.configure()
@@ -43,11 +44,13 @@ class UserData extends React.Component{
     Dob:'',
     Phone:'',
     Address:'',
-    id:null
+    id:null,
+    loading:false
   }
   componentDidMount(){
+    this.setState({loading:true})
     id = this.props.match.params.id;
-    console.log(id)
+    console.log('userdata',id)
     this.setState({id})
     Firebase.database().ref('/Users/'+id).on("value",(item) => {
    
@@ -61,10 +64,16 @@ class UserData extends React.Component{
          Doctor: item.val().data['Doctor']
       })
      })
+     setTimeout(() => {
+      this.setState({loading:false})
+     }, 3000);
+     
+
   }
 
   formSubmit = () => {
-    console.log(this.state.Name)
+   
+    if (this.validateForm(0)) {
                Firebase.database().ref('/Users/' + id + '/data/' ).update({
                          Name:this.state.Name,
                          Dob:this.state.Dob,
@@ -81,8 +90,25 @@ class UserData extends React.Component{
                  this.notify(error)
                  console.error(error);
                })
-             
+              }   
        }
+
+       validateForm() {
+        let formIsValid = true;
+
+       
+        if (this.state.Name=== "" || this.state.Name=== null || this.state.Name=== undefined) {
+          formIsValid = false;
+          this.notify("Please enter name.")
+         
+        }
+      
+        return formIsValid;
+        
+
+      }
+
+
        notify = (e)=>{  
         toast(e)  
       } 
@@ -100,11 +126,11 @@ class UserData extends React.Component{
     let renderData
 
     if (this.state.Disease === 'Infant'){
-      renderData= <Infant/>
+      renderData= <Infant id={id}/>
     }
     
     else if (this.state.Disease === 'Pregnancy'){
-      renderData= <Pregnancy/>
+      renderData= <Pregnancy id={this.state.id}/>
     }
     else{
       renderData= <Others id={this.state.id}/>
@@ -113,6 +139,7 @@ class UserData extends React.Component{
     return(
       <>
       <Header/>
+      <Loader loaded={!this.state.loading}>
       <CRow style={{margin:10}}>
         <CCol xs="12" sm="12" md="12" lg="4">
           <CCard accentColor="info">
@@ -247,6 +274,7 @@ class UserData extends React.Component{
           </CCard>
         </CCol>
     </CRow>
+    </Loader>
     </>
   );
 }
