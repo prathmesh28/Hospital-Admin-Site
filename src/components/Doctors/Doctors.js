@@ -79,6 +79,7 @@ class Doctors extends React.Component{
         })
   }
   toggleDetails = (index) => {
+
     const position = this.state.details.indexOf(index)
     let newDetails = this.state.details.slice()
     if (position !== -1) {
@@ -103,6 +104,7 @@ class Doctors extends React.Component{
           name:this.state.name,
           registered:this.state.registered.toLocaleString(),
           role:this.state.role,
+          gender:this.state.gender,
           qualification:this.state.qualification
         }
         let id = await uuidv4(data)
@@ -173,7 +175,7 @@ class Doctors extends React.Component{
           'registered':
           (item, index)=>(
               <td>
-                
+               
                
                 <DatePicker
                      value={item.registered}
@@ -189,15 +191,16 @@ class Doctors extends React.Component{
               <CCollapse show={this.state.details.includes(index)}>
                 <CCardBody>
                   <h4>
-                    {item.username}
+                    {item.gender}
                   </h4>
                   <p className="text-muted">User since: {item.registered}</p>
                   
                   <CButton size="sm" color="danger" className="ml-1"
                     onClick={()=>{
-                         let userRef = Firebase.database().ref('Doctors/' + item.id)
-                         userRef.remove()
-                        console.log(userRef)
+                      console.log(item.gender)
+                        //  let userRef = Firebase.database().ref('Doctors/' + item.id)
+                        //  userRef.remove()
+                        // console.log(userRef)
 
                     }}>
                     Delete
