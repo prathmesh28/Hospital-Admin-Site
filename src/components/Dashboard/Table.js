@@ -19,6 +19,8 @@ import {
   CModalFooter
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
+import Loader from 'react-loader';
+
 import Firebase from '../../firebase'
 import _ from 'lodash';
 import { freeSet } from '@coreui/icons'
@@ -36,11 +38,15 @@ class Dashboard extends React.Component {
     info: false,
     email:'',
     password:'',
-    id: ''
+    id: '',
+    loading:false,
+
   }
   }
 
   componentDidMount(){
+    this.setState({loading:true})
+
     Firebase.database().ref('/Users/').on("value",(item) => {
          // console.log(item.val())
           const users = _.map( item.val(), (e) => {
@@ -48,11 +54,13 @@ class Dashboard extends React.Component {
           })
           this.setState({ data:users})
         })
+
+        setTimeout(() => {
+          this.setState({loading:false})
+         }, 3000);
   }
 
   UserSignUP = () => {
-    //  Firebase.database().ref('/')
-    console.log(this.state.id)
      Firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
      .then(async(userCredentials) => {
        await Firebase.database().ref('/Users/'+this.state.id+'/data/').update({ Account:true,Email:this.state.email })
@@ -95,7 +103,8 @@ class Dashboard extends React.Component {
     
   return  (
     <>
-    
+          <Loader loaded={!this.state.loading}>
+
       <CRow style={{margin:'30px'}}>
       <CCol xs="12" lg="12">
       <CCardBody>
@@ -121,7 +130,7 @@ class Dashboard extends React.Component {
                         </CInputGroupText>
                       </CInputGroupPrepend>
        
-                      <CInput type="text" value={this.state.email}  />
+                      <CInput type="text" value={this.state.email} readOnly={true} />
                     </CInputGroup>
                     <CInputGroup className="mb-4">
                       <CInputGroupPrepend>
@@ -130,7 +139,7 @@ class Dashboard extends React.Component {
                         </CInputGroupText>
                       </CInputGroupPrepend>
            
-                      <CInput type="text" value={this.state.password} />
+                      <CInput type="text" value={this.state.password} readOnly={true}/>
                     </CInputGroup>
                     <div>*Please note down email and password</div>
                     <CRow>
@@ -238,6 +247,8 @@ class Dashboard extends React.Component {
         </CCol>
 
       </CRow>
+      </Loader>
+
     </>
   
   )

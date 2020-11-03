@@ -15,9 +15,7 @@ import {
     CSelect,
     CRow,
   } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
 import Firebase from '../../firebase'
-import { freeSet } from '@coreui/icons'
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 
@@ -57,20 +55,15 @@ export default class Form extends React.Component {
   setTime = () => {
       this.setState({curTime : new Date().toLocaleString()})
   }
-  componentWillMount(){
-    this.setTime();
-  }
+  
   componentDidMount(){
     Firebase.database().ref('/Doctors/').on("value",(item) => {
-      // console.log(item.val())
        const doctors = _.map( item.val(), (e) => {
          return e.data.name 
        })
-       console.log(doctors)
 
        this.setState({ doctors })
      })
-     //console.log(doctors)
 
       window.setInterval(function () {
       this.setTime();
@@ -80,7 +73,6 @@ export default class Form extends React.Component {
 
   formSubmit = async () => {
     
-   // console.log(this.state.id)
         if (this.validateForm(0)) {
                 
              //   
@@ -100,7 +92,6 @@ export default class Form extends React.Component {
               let id = await uuidv4(data)
               this.setState({id})
               data={...data, id:this.state.id }
-              console.log(data)
               Firebase.database().ref('/Users/' + id ).set({
                         data
               })
@@ -119,10 +110,15 @@ export default class Form extends React.Component {
       validateForm() {
         let formIsValid = true;
 
-        console.log(this.state.phone)
+
+        if (this.state.name=== "" || this.state.name=== null) {
+          formIsValid = false;
+          this.notify("Please enter full name.")
+         
+        }
         if (this.state.phone=== "" || this.state.phone=== null) {
           formIsValid = false;
-          this.notify("Please enter your mobile no.")
+          this.notify("Please enter mobile no.")
          
         }
         if (this.state.dob=== "" || this.state.dob=== null) {
@@ -138,11 +134,11 @@ export default class Form extends React.Component {
         var pattern = new RegExp(/^[0-9\b]+$/) 
         if (!pattern.test(this.state.phone)) {
           formIsValid = false;
-          this.notify("Please enter valid phone number.")
+          this.notify("Please enter valid a phone number.")
 
         }else if(this.state.phone.length !== 10){
           formIsValid = false;
-          this.notify("Please enter valid phone number.")
+          this.notify("Please enter valid a phone number.")
         }
         return formIsValid;
         
@@ -178,10 +174,10 @@ export default class Form extends React.Component {
 
                 <CFormGroup row>
                   <CCol md="3">
-                    <CLabel htmlFor="text-input">Full name:</CLabel>
+                    <CLabel htmlFor="name">Full name:</CLabel>
                   </CCol>
                   <CCol xs="12" md="9">
-                    <CInput id="text-input" name="text-input" defaultValue={this.state.name} onChange={e => {this.setState({ name:e.target.value })}} placeholder="Enter Full Name" required/>
+                    <CInput id="name" name="text-input" defaultValue={this.state.name} onChange={e => {this.setState({ name:e.target.value })}} placeholder="Enter Full Name" required/>
                     <CFormText>Please enter full name</CFormText>
                   </CCol>
                 </CFormGroup>
@@ -231,7 +227,7 @@ export default class Form extends React.Component {
                 </CFormGroup>
                 <CFormGroup row>
                   <CCol md="3">
-                    <CLabel htmlFor="email-input">Email Input:</CLabel>
+                    <CLabel htmlFor="email-input">Email:</CLabel>
                   </CCol>
                   <CCol xs="12" md="9">
                     <CInput defaultValue={this.state.email} onChange={e => {this.setState({ email:e.target.value })}} type="email" id="email-input" name="email-input" placeholder="Enter Email" autoComplete="email"/>
@@ -283,7 +279,7 @@ export default class Form extends React.Component {
                       }} 
                       custom name="select" id="Patient select">
                       <option >Please select Type</option>
-                      <option value="Infant">Infant</option>
+                      <option value="Paediatric">Paediatric</option>
                       <option value="Pregnancy">Pregnancy</option>
                       <option value="Other">Other</option>
                     </CSelect>
@@ -293,8 +289,8 @@ export default class Form extends React.Component {
                   <CCol md="3">
                   </CCol>
                   <CCol xs="12" md="9">
-                    <CLabel htmlFor="select">Other:</CLabel>
-                    <CInput id="text-input" name="text-input" defaultValue={this.state.disease} onChange={e => {this.setState({ disease:e.target.value })}} disabled={this.state.isDisable}/>
+                    <CLabel htmlFor="Other">Other:</CLabel>
+                    <CInput id="Other" name="text-input" defaultValue={this.state.disease} onChange={e => {this.setState({ disease:e.target.value })}} disabled={this.state.isDisable}/>
                   </CCol>
                 </CFormGroup>
 
@@ -307,14 +303,7 @@ export default class Form extends React.Component {
                   </CCol>
                 </CFormGroup>
 
-                <CFormGroup row>
-                  <CCol md="3">
-                    <CLabel htmlFor="date-input">Next Visit:</CLabel>
-                  </CCol>
-                  <CCol xs="12" md="9">
-                    <CInput defaultValue={this.state.nextDate} min={new Date().toISOString().substr(0,10)} onChange={e => {this.setState({ nextDate:e.target.value })}} type="date" id="Next date-input" name="date-input" placeholder="date" />
-                  </CCol>
-                </CFormGroup>
+               
 
 
               </CForm>

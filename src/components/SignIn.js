@@ -14,7 +14,6 @@ import {
   CInputGroupText,
   CRow,
   CModal,
-  CModalBody
 } from '@coreui/react'
 import Loader from "react-loader";
 import CIcon from '@coreui/icons-react'

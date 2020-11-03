@@ -140,7 +140,7 @@ addRow =async()=> {
 
                               // console.log(index)
                                  var r = await window.confirm("Table entry of date: " + item.Date +" will be deleted");
-                                 if (r == true) {
+                                 if (r === true) {
                                     let userRef = Firebase.database().ref('Users/' + id +'/data/history/'+item.newid)
                                     userRef.remove()
                                  } else {
@@ -171,15 +171,15 @@ addRow =async()=> {
                      />
                      </td>
                      <td>
-                        <input type="text" class="form-control" id="Weight"  placeholder="Weight"
+                        <input type="text" className="form-control" id="Weight"  placeholder="Weight"
                         value={this.state.Weight} onChange={e => {this.setState({ Weight:e.target.value })}}/>
                      </td>
                      <td>
-                        <input type="text" class="form-control" id="BP" placeholder="BP"
+                        <input type="text" className="form-control" id="BP" placeholder="BP"
                         value={this.state.BP} onChange={e => {this.setState({ BP:e.target.value })}}/>
                      </td>
                      <td>
-                     <input type="text" class="form-control" id="Remarks" placeholder="Remarks"
+                     <input type="text" className="form-control" id="Remarks" placeholder="Remarks"
                      value={this.state.Remark} onChange={e => {this.setState({ Remark:e.target.value })}}/>
                      </td>
                   </tr>

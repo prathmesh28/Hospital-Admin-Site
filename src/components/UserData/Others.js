@@ -205,7 +205,7 @@ PrescriptionHandleProgress = PrescriptionProgress => this.setState({ Prescriptio
                            <CButton size="sm" color="danger" className="ml-1"
                               onClick={async()=>{
                                   var r = await window.confirm("Table entry of date: " + item.Date +" will be deleted");
-                                 if (r == true) {
+                                 if (r === true) {
                                     let userRef = Firebase.database().ref('Users/' + id +'/data/history/'+item.newid)
                                     userRef.remove()
 
@@ -277,7 +277,7 @@ PrescriptionHandleProgress = PrescriptionProgress => this.setState({ Prescriptio
                      <td>
                        
                         {this.state.reportIsUploading && <p>Progress: {this.state.reportProgress}</p>}
-                        {this.state.reportAvatarURL && <img width={50} height={50} src={this.state.reportAvatarURL} />}
+                        {this.state.reportAvatarURL && <img alt={"report"} width={50} height={50} src={this.state.reportAvatarURL} />}
                         <FileUploader
                            id="Report"
                            style={{display:'none'}}
@@ -292,13 +292,13 @@ PrescriptionHandleProgress = PrescriptionProgress => this.setState({ Prescriptio
                            onUploadSuccess={this.reportHandleUploadSuccess}
                            onProgress={this.reportHandleProgress}
                         />
-                        <label for="Report">{this.state.Report===""?"Click to upload":this.state.Report}</label>
+                        <label htmlFor="Report">{this.state.Report===""?"Click to upload":this.state.Report}</label>
 
 
                      </td>
                      <td>
                      {this.state.PrescriptionIsUploading && <p>Progress: {this.state.PrescriptionProgress}</p>}
-                        {this.state.PrescriptionAvatarURL && <img width={50} height={50} src={this.state.PrescriptionAvatarURL} />}
+                        {this.state.PrescriptionAvatarURL && <img alt={"Prescription"} width={50} height={50} src={this.state.PrescriptionAvatarURL} />}
                         
                         <FileUploader
                            id="Prescription"
@@ -314,10 +314,10 @@ PrescriptionHandleProgress = PrescriptionProgress => this.setState({ Prescriptio
                            onUploadSuccess={this.PrescriptionHandleUploadSuccess}
                            onProgress={this.PrescriptionHandleProgress}
                         />
-                        <label for="Prescription">{this.state.Prescription===""?"Click to upload":this.state.Prescription}</label>
+                        <label htmlFor="Prescription">{this.state.Prescription===""?"Click to upload":this.state.Prescription}</label>
                      </td>
                      <td>
-                     <input type="text" class="form-control" id="Remarks" placeholder="Remarks"
+                     <input type="text" className="form-control" id="Remarks" placeholder="Remarks"
                      value={this.state.Remark} onChange={e => {
                         this.setState({ Remark:e.target.value })
                         console.log(e.target.value)

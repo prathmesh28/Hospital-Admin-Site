@@ -6,30 +6,17 @@ import {
     CCardHeader,
     CCardBody,
     CButton,
-    CModal,
     CDataTable,
-    CBadge,
-    CModalHeader,
-    CModalTitle,
-    CModalBody,
-    CModalFooter,
-    CForm,
     CCollapse,
     CFormGroup,
     CLabel,
-    CInputFile,
-    CInput,
     CInputRadio,
-    CTextarea,
     CCardFooter
   } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import { freeSet } from '@coreui/icons'
 import { withRouter } from 'react-router-dom'
 import Firebase from "../../firebase";
 import _ from 'lodash';
 import Header from '../Dashboard/Header'
-import Loader from 'react-loader';
 import DatePicker from 'react-date-picker';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -45,7 +32,7 @@ toast.configure()
     { key: 'name', _style: { width: '40%'} },
     'registered',
     { key: 'gender', _style: { width: '10%'} },
-    { key: 'role', _style: { width: '20%'} },
+    { key: 'specialization', _style: { width: '20%'} },
     { key: 'qualification', _style: { width: '20%'} },
     {
       key: 'show_details',
@@ -62,7 +49,7 @@ class Doctors extends React.Component{
     details:[],
     data:null,
     name:"",
-    role:"",
+    specialization:"",
     registered:new Date(),
     qualification:"",
     id:"",
@@ -103,12 +90,12 @@ class Doctors extends React.Component{
       let data ={
           name:this.state.name,
           registered:this.state.registered.toLocaleString(),
-          role:this.state.role,
+          specialization:this.state.specialization,
           gender:this.state.gender,
           qualification:this.state.qualification
         }
         let id = await uuidv4(data)
-          this.setState({ id, name:"",role:"",qualification:"" })
+          this.setState({ id, name:"",specialization:"",qualification:"" })
           data={...data, id:this.state.id }
   
         Firebase.database().ref('/Doctors/' + id ).set({
@@ -181,6 +168,7 @@ class Doctors extends React.Component{
                      value={item.registered}
                      format="dd-MM-y"
                      disabled={true}
+                     
                   //   onChange={item.Date}
                />
               </td>
@@ -210,12 +198,13 @@ class Doctors extends React.Component{
     />
     </CCardBody>
     <CCardFooter>
+    <h4>Add Doctor</h4>  
+
        <table id='Data' className="table table-hover ">
-         <h4>Add Doctor</h4>  
        <tbody>
           <tr>
              <td>
-             <input type="text" class="form-control" id="name" placeholder="Doctor Name" value={this.state.name}
+             <input type="text" className="form-control" id="name" placeholder="Doctor Name" value={this.state.name}
                     onChange={e => {this.setState({ name:e.target.value })}}/>
              </td>
 
@@ -245,11 +234,11 @@ class Doctors extends React.Component{
               
              </td>
              <td>
-                <input type="text" class="form-control" id="Role"  placeholder="Role" value={this.state.role}
-                onChange={e => {this.setState({ role:e.target.value })}}/>
+                <input type="text" className="form-control" id="specialization"  placeholder="Specialization" value={this.state.specialization}
+                onChange={e => {this.setState({ specialization:e.target.value })}}/>
              </td>
              <td>
-             <input type="text" class="form-control" id="qualification" placeholder="qualification" value={this.state.qualification}
+             <input type="text" className="form-control" id="qualification" placeholder="qualification" value={this.state.qualification}
                 onChange={e => {this.setState({ qualification:e.target.value })}}/>
              </td>
           </tr>

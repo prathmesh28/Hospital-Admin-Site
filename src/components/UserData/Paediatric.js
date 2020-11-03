@@ -28,7 +28,7 @@ const fields = [
     }
   ]
   let id
-export default class Infant extends React.Component {
+export default class Paediatric extends React.Component {
 
     constructor(props) {
         super(props)
@@ -142,7 +142,7 @@ export default class Infant extends React.Component {
 
                      // console.log(index)
                         var r = await window.confirm("Table entry of date: " + item.Date +" will be deleted");
-                        if (r == true) {
+                        if (r === true) {
                            let userRef = Firebase.database().ref('Users/' + id +'/data/history/'+item.newid)
                            userRef.remove()
                         } else {
@@ -173,15 +173,15 @@ export default class Infant extends React.Component {
              />
              </td>
              <td>
-                <input type="text" class="form-control" id="Weight" placeholder="Weight"
+                <input type="text" className="form-control" id="Weight" placeholder="Weight"
                 value={this.state.Weight} onChange={e => {this.setState({ Weight:e.target.value })}}/>
              </td>
              <td>
-                <input type="text" class="form-control" id="Height" placeholder="Height"
+                <input type="text" className="form-control" id="Height" placeholder="Height"
                 value={this.state.Height} onChange={e => {this.setState({ Height:e.target.value })}}/>
              </td>
              <td>
-             <input type="text" class="form-control" id="Remarks" placeholder="Remarks"
+             <input type="text" className="form-control" id="Remarks" placeholder="Remarks"
              value={this.state.Remark} onChange={e => {this.setState({ Remark:e.target.value })}}/>
              </td>
           </tr>
