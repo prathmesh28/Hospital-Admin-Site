@@ -26,7 +26,7 @@ import Others from './Others'
 import { withRouter } from 'react-router-dom'
 import Firebase from "../../firebase";
 import _ from 'lodash';
-import DateTimePicker from 'react-datetime-picker'
+// import DateTimePicker from 'react-datetime-picker'
 import Header from '../Dashboard/Header'
 import Loader from 'react-loader';
 import {toast} from 'react-toastify';  
@@ -49,9 +49,9 @@ class UserData extends React.Component{
     id:null,
     loading:false,
     Date:null,
-    remark:'check',
+    remark:'',
     doctors:null  //doctor list
-  }
+  } 
   componentDidMount(){
     this.setState({loading:true})
     id = this.props.match.params.id;
@@ -160,14 +160,27 @@ class UserData extends React.Component{
           })
       }
 
+
+      
+
+
       submitDate=()=>{
-        this.setState({loading:true})
+        // 
 
         console.log(this.state.Date)
+        console.log(this.state.remark)
+
         let temp = this.state.Date
-        if(temp!==null || temp !== undefined)
+        if(this.state.Date===null || this.state.Date === undefined || this.state.Date === '')
         {
-          Firebase.database().ref('/Users/' + id + '/data/' ).update({
+          this.notify('invalid date')
+          console.log()
+
+         
+
+        }else{
+          this.setState({loading:true})
+           Firebase.database().ref('/Users/' + id + '/data/' ).update({
             
             NextDate:temp,
             remark:this.state.remark
@@ -189,12 +202,7 @@ class UserData extends React.Component{
                 this.setState({loading:false})
                }, 3000);
             })
-
-        }else{
-          this.notify('enter Date')
-          setTimeout(() => {
-            this.setState({loading:false})
-           }, 3000);
+          
         }
        
       }
@@ -347,36 +355,55 @@ class UserData extends React.Component{
               
             </CCardHeader>
             <CModalBody>
-
-              {this.state.Date===null ||this.state.Date===undefined?<div>No appointment set</div>:
-              <CRow>
-                <CCol md="5">
-                  <CRow>
-                    <CCol md="2" style={{justifyContent:"center"}}>
-                      <CLabel  style={{fontSize:16,color:'#000'}}>Date:</CLabel>
-                    </CCol>
-                    <CCol xs="12" md="10">
-                      
-                    <CInput style={{backgroundColor:"#fff",color:"#000",fontSize:14}} value={this.state.Date} type="datetime-local" id="date-input" name="date-input" readOnly={true}/>
-                    </CCol>
-                  </CRow>
-                  
-                </CCol>
-                <CCol xs="12" md="7">
-                <CRow>
-                    <CCol md="2">
-                      <CLabel htmlFor="remarks">Remarks:</CLabel>
-                    </CCol>
-                    <CCol xs="12" md="10">
-                    <p id="remarks" class="border" style={{borderRadius:5,fontSize:16,paddingInlineStart:10,paddingInlineEnd:10}} >{this.state.remark}</p>   
-                    </CCol>
-                  </CRow>
-                       
-
-                </CCol>
               
-              </CRow>}
+                {
+                  
+              _.map( data, (e,index) => {
+                  if(e.NextDate===undefined || e.NextDate===null){
+                    return(
+                      <div className="d-flex justify-content-center"><b>No appointments set</b></div>
+                    )
+                  }else return(
+                    <CRow>
+                    <CCol md="5">
+                    <CRow>
+                      <CCol md="2" style={{justifyContent:"center"}}>
+                        <CLabel  style={{fontSize:16,color:'#000'}}>Date:</CLabel>
+                      </CCol>
+                      <CCol xs="12" md="10">
+                      { console.log('apps',e.NextDate)}
+
+                        
+                      <CInput style={{backgroundColor:"#fff",color:"#000"}} value={e.NextDate} type="datetime-local" id="date-input" name="date-input" readOnly={true}/>
+                      </CCol>
+                    </CRow>
+                    
+                  </CCol>
+                  <CCol xs="12" md="7">
+                  <CRow>
+                      <CCol md="2">
+                        <CLabel htmlFor="remarks">Remarks:</CLabel>
+                      </CCol>
+                      <CCol xs="12" md="10">
+                      <p id="remarks" class="border" style={{borderRadius:5,fontSize:16,paddingInlineStart:10,paddingInlineEnd:10}} >
+                        {e.remark}
+                        </p>  
+                       
+                      </CCol>
+                      
+                    </CRow>
+                  </CCol>
+                    </CRow>
+                  )
+              })
+            }
+                
+              
+            
               </CModalBody>
+{/* 
+
+ */}
 
 
           </CCard>
@@ -411,7 +438,10 @@ class UserData extends React.Component{
                     <CLabel htmlFor="name">Remarks:</CLabel>
                   </CCol>
                   <CCol xs="12" md="9">
-                  <CTextarea defaultValue={this.state.remark} onChange={e => {this.setState({ remark:e.target.value })}} id="remark" name="text-input" placeholder="" required />
+                  <CTextarea value={this.state.remark} onChange={e => {
+                    
+                    this.setState({ remark:e.target.value })
+                    }} id="remark" name="text-input" placeholder="" required />
                   </CCol>
                 </CFormGroup>
 
@@ -420,8 +450,27 @@ class UserData extends React.Component{
               </CForm>
             </CModalBody>
             <CModalFooter>
+                <CButton color="danger" size={'sm'} onClick={async() => {
+                  await this.setState({ Date:null,remark:'',nextEdit:false})
+                  Firebase.database().ref('/Users/' + id + '/data/' ).update({
+            
+                    NextDate:this.state.Date,
+                    remark:this.state.remark
+                   
+                    })
+                    .then((doc) => {
+                    //  this.setState({message:'User Added'})
+                      this.notify('Deleted')
+                    })
+                    .catch((error) => {
+                      this.notify(error)
+                    })
+                }}>
+                      Delete
+                </CButton>
                 <CButton size="md" color="primary" onClick={()=>{this.submitDate()}}> Submit</CButton>
-              <CButton color="secondary" onClick={() => this.setState({nextEdit:false})}>Cancel</CButton>
+                <CButton color="secondary" onClick={() => this.setState({nextEdit:false})}>Cancel</CButton>
+                
             </CModalFooter>
           </CModal>
 

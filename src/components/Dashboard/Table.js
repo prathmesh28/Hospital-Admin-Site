@@ -25,6 +25,10 @@ import Firebase from '../../firebase'
 import _ from 'lodash';
 import { freeSet } from '@coreui/icons'
 import { withRouter } from 'react-router-dom'
+import {toast} from 'react-toastify';  
+import 'react-toastify/dist/ReactToastify.css'; 
+toast.configure()
+
 const fields = ['Name','Address', 'Date', 'Disease','Dob','Doctor', 'Email', 'Gender', 'NextDate', 'Phone', 'Account']
 
 
@@ -60,12 +64,42 @@ class Dashboard extends React.Component {
          }, 3000);
   }
 
+
+  notify = (e)=>{  
+    toast(e)  
+  } 
+ 
+
   UserSignUP = () => {
+    this.setState({loading:true})
      Firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
      .then(async(userCredentials) => {
-       await Firebase.database().ref('/Users/'+this.state.id+'/data/').update({ Account:true,Email:this.state.email })
-       this.props.history.push(`/User/${this.state.id}`)
-     }).catch((error)=>{console.error(error);})
+      
+      let data
+
+      let userRef =Firebase.database().ref('/Users/'+this.state.id)
+      await userRef.once("value",(item) => {
+        data=item.val()
+       })
+      userRef.remove()
+        data={...data.data,Account:true,Email:this.state.email,id:userCredentials.user.uid}
+        console.log(data)
+
+        await Firebase.database().ref('/Users/'+userCredentials.user.uid).update({ data })
+        this.props.history.push(`/User/${userCredentials.user.uid}`)
+
+        this.setState({id:userCredentials.user.uid})
+
+        setTimeout(() => {
+          this.setState({loading:false})
+         }, 3000);
+
+     }).catch((error)=>{
+      setTimeout(() => {
+        this.setState({loading:false})
+       }, 3000);
+       this.notify(error)
+      })
   }
   pageNav=(item)=>{
     this.props.history.push(`/User/${item.id}`)
@@ -81,7 +115,8 @@ class Dashboard extends React.Component {
       let mt = newDate.getMinutes();
       let s = newDate.getSeconds();
       let ms = newDate.getMilliseconds();
-      let newEmail = index.Name + y+m+d+h+mt+s+ms +'@hospital.com'
+      let name = index.Name.replace(/\s+/g, '')
+      let newEmail = name + y+m+d+h+mt+s+ms +'@hospital.com'
       this.setState({info:true, email:newEmail})
 
     }else{
@@ -120,6 +155,7 @@ class Dashboard extends React.Component {
               </CModalHeader>
               <CModalBody>
               <CCardBody>
+              <Loader loaded={!this.state.loading}>
                   <CForm>
                     <h4>User Login Details</h4>
                     {/* <p className="text-muted">Sign In to your account</p> */}
@@ -149,6 +185,7 @@ class Dashboard extends React.Component {
                       
                     </CRow>
                   </CForm>
+                  </Loader>
                 </CCardBody>
               </CModalBody>
               <CModalFooter>
@@ -190,19 +227,9 @@ class Dashboard extends React.Component {
               pagination
               clickableRows
               onRowClick={(item) => {
-              //  this.setState({info:true})
-             //   console.log(item.email)
-                //history.push(`/users/${item.id}`)
               }}
                scopedSlots = {{
-              //   'status':
-              //     (item)=>(
-              //       <td>
-              //         <CBadge color={getBadge(item.status)}>
-              //           {item.status}
-              //         </CBadge>
-              //       </td>
-              //     ),
+
                 'Account':
                   (item, index)=>{
                     return (
@@ -219,27 +246,22 @@ class Dashboard extends React.Component {
                       </td>
                       )
                   },
-              //   'details':
-              //       (item, index)=>{
-              //         return (
-              //         <CCollapse show={details.includes(index)}>
-              //           <CCardBody>
-              //             <h4>
-              //               {item.username}
-              //             </h4>
-              //             <p className="text-muted">User since: {item.Date}</p>
-              //             {/* <Link to={{ pathname:"/user", state: { item: 'true' }}} > */}
-              //               <CButton size="sm" color="info">
-              //                 User Settings
-              //               </CButton>
-              //             {/* </Link> */}
-              //             <CButton size="sm" on color="danger" className="ml-1">
-              //               Delete
-              //             </CButton>
-              //           </CCardBody>
-              //         </CCollapse>
-              //       )
-              //     }
+                  'show_details':
+                  (item, index)=>{
+                    return (
+                      <td className="py-2">
+                        <CButton
+                          color="primary"
+                          variant="outline"
+                          shape="square"
+                          size="sm"
+                          onClick={()=>{this.toggleDetails(index)}}
+                        >
+                          {this.state.details.includes(index) ? 'Hide' : 'Show'}
+                        </CButton>
+                      </td>
+                      )
+                  },
                 }}
             />
             </CCardBody>

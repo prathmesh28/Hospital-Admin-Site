@@ -14,6 +14,7 @@ import {
     CLabel,
     CSelect,
     CRow,
+    CTooltip
   } from '@coreui/react'
 import Firebase from '../../firebase'
 import { v4 as uuidv4 } from 'uuid';
@@ -41,7 +42,10 @@ export default class Form extends React.Component {
       nextDate: null,
       message: "error",
       PatientType:false,
-      doctors:null
+      doctors:null,
+      noEmail:false,
+      isDisable:false
+
     }
      this.formSubmit = this.formSubmit.bind(this);
   }
@@ -87,7 +91,6 @@ export default class Form extends React.Component {
                 Disease:this.state.disease,
                 Date:new Date().toLocaleString(),
                 NextDate:this.state.nextDate,
-                isDisable:false
               }
               let id = await uuidv4(data)
               this.setState({id})
@@ -111,6 +114,17 @@ export default class Form extends React.Component {
         let formIsValid = true;
 
 
+        if(this.state.noEmail!==true){
+          if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.state.email))
+          {
+            
+          }
+          else{
+            this.notify("Please enter a valid email or click on disable email button")
+            formIsValid = false;
+          }
+            
+        }
         if (this.state.name=== "" || this.state.name=== null) {
           formIsValid = false;
           this.notify("Please enter full name.")
@@ -229,9 +243,13 @@ export default class Form extends React.Component {
                   <CCol md="3">
                     <CLabel htmlFor="email-input">Email:</CLabel>
                   </CCol>
-                  <CCol xs="12" md="9">
-                    <CInput defaultValue={this.state.email} onChange={e => {this.setState({ email:e.target.value })}} type="email" id="email-input" name="email-input" placeholder="Enter Email" autoComplete="email"/>
-                    <CFormText className="help-block">Please enter your email</CFormText>
+                  <CCol xs="12" md="9" style={{display:'flex',flexDirection:'row'}}>
+                    <CInput defaultValue={this.state.email} onChange={e => {this.setState({ email:e.target.value })}} type="email" id="email-input" name="email-input" placeholder="Enter Email" autoComplete="email" disabled={this.state.noEmail}/>
+                    <CTooltip content="Disable email">
+                    <CButton color="info" variant='outline' onClick={()=>{
+                      this.setState({ noEmail:!this.state.noEmail,email:"" })}
+                      }>X</CButton>
+                    </CTooltip>
                   </CCol>
                 </CFormGroup>
 

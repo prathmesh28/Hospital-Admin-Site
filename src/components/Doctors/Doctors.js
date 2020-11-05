@@ -136,7 +136,7 @@ class Doctors extends React.Component{
       items={data}
       fields={fields}
       columnFilter
-      tableFilter
+      //tableFilter
       itemsPerPageSelect
       itemsPerPage={5}
       hover
