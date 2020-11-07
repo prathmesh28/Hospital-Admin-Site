@@ -14,7 +14,9 @@ import Firebase from '../../firebase'
 import DatePicker from 'react-date-picker';
 import FileUploader from "react-firebase-file-uploader";
 import { v4 as uuidv4 } from 'uuid';
-
+import {toast} from 'react-toastify';  
+import 'react-toastify/dist/ReactToastify.css'; 
+toast.configure()
 
 const fields = [
    { key: 'Date', _style: { width: '25%'} },
@@ -36,6 +38,7 @@ export default class Others extends React.Component {
     this.state = { 
        history: null,
        Date:new Date(),
+       Today:new Date(),
        Report:"",
        Prescription:"",
        Remark:"",
@@ -51,7 +54,7 @@ export default class Others extends React.Component {
        PrescriptionProgress: 0,
        PrescriptionAvatarURL: "",
 
-       newid:""
+      // newid:""
 
     }
  }
@@ -66,13 +69,32 @@ export default class Others extends React.Component {
       console.log('data',history)
       this.setState({ history })
    })
+
+   const timer = setInterval(() => { // Creates an interval which will update the current data every minute
+      // This will trigger a rerender every component that uses the useDate hook.
+      this.setState({Today:new Date()})
+      
+    }, 1000);
+    return () => {
+      clearInterval(timer); // Return a funtion to clear the timer so that it will stop being called on unmount
+    }
  }
 
-
+ notify = (e)=>{  
+   toast(e)  
+ } 
 
   addRow =async()=> {
      
-      let temp = this.state.Date.toLocaleString()
+       let temp = this.state.Date.toLocaleString()
+
+
+
+       let NextDate = this.state.Today
+       let newtemp = NextDate.toISOString().substr(0, 4) + NextDate.toISOString().substr(5, 2) + NextDate.toISOString().substr(8, 2) + NextDate.toTimeString().substr(0, 2) + NextDate.toTimeString().substr(3, 2) + NextDate.toTimeString().substr(6, 2) 
+     //  console.log(newtemp)
+
+
       let sethistory = { 
          Date: temp, 
          Report: this.state.Report,
@@ -82,9 +104,9 @@ export default class Others extends React.Component {
          Remark: this.state.Remark 
       }
 
-      let newid = await uuidv4(sethistory)
+      //let newid = await uuidv4(sethistory)
       this.setState({ 
-         newid,
+        // newid,
          Report:"", 
          Prescription:"",
          Remark:"",
@@ -98,21 +120,17 @@ export default class Others extends React.Component {
          PrescriptionAvatarURL: "",
        })
 
-       sethistory={...sethistory, newid:this.state.newid }
-      console.log(sethistory)
-        Firebase.database().ref('/Users/' + id +'/data/history/'+newid).set({
+      sethistory={...sethistory, newid:newtemp }
+     console.log(sethistory)
+        Firebase.database().ref('/Users/' + id +'/data/history/'+newtemp).set({
          sethistory
-           })
-           .then((doc) => {
-           //  this.setState({message:'User Added'})
-        //   this.notify('user added')
-           console.log(doc)
-           //window.location.reload()
-           })
-           .catch((error) => {
-         //  this.notify(error)
-           console.error(error);
-           })
+            })
+            .then((doc) => {
+            this.notify('data added')
+            })
+            .catch((error) => {
+            this.notify(error)
+            })
     
 }
 

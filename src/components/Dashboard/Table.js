@@ -205,16 +205,7 @@ class Dashboard extends React.Component {
             </CCardHeader>
 
             <CCardBody>
-            {/* <CCol xs="12" sm="6" md="4">
-              <CCard color="success" className="text-white text-center">
-                <CCardBody>
-                  <blockquote className="card-bodyquote">
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
-                    <footer>Someone famous in <cite title="Source Title">Source Title</cite></footer>
-                  </blockquote>
-                </CCardBody>
-              </CCard>
-            </CCol> */}
+            
             <CDataTable
               items={data}
               fields={fields}

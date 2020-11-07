@@ -19,6 +19,7 @@ import {
 import Firebase from '../../firebase'
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
+import Loader from 'react-loader';
 
 import {toast} from 'react-toastify';  
 import 'react-toastify/dist/ReactToastify.css'; 
@@ -37,6 +38,7 @@ export default class Form extends React.Component {
       phone: null,
       email: "",
       address: "",
+      pin:null,
       doctor: "",
       disease: "",
       nextDate: null,
@@ -44,7 +46,8 @@ export default class Form extends React.Component {
       PatientType:false,
       doctors:null,
       noEmail:false,
-      isDisable:false
+      isDisable:false,
+      loading:false
 
     }
      this.formSubmit = this.formSubmit.bind(this);
@@ -61,14 +64,16 @@ export default class Form extends React.Component {
   }
   
   componentDidMount(){
+    this.setState({loading:true})
     Firebase.database().ref('/Doctors/').on("value",(item) => {
        const doctors = _.map( item.val(), (e) => {
          return e.data.name 
        })
 
        this.setState({ doctors })
+       this.setState({loading:false})
      })
-
+     this.setState({loading:false})
       window.setInterval(function () {
       this.setTime();
     }.bind(this), 1000);
@@ -76,9 +81,9 @@ export default class Form extends React.Component {
   
 
   formSubmit = async () => {
-    
+    this.setState({loading:true})
         if (this.validateForm(0)) {
-                
+          this.setState({loading:true})
              //   
                 let data ={
                 Name:this.state.name,
@@ -87,6 +92,7 @@ export default class Form extends React.Component {
                 Phone:this.state.phone,
                 Email:this.state.email,
                 Address:this.state.address,
+                Pin:this.state.pin,
                 Doctor:this.state.doctor,
                 Disease:this.state.disease,
                 Date:new Date().toLocaleString(),
@@ -101,18 +107,20 @@ export default class Form extends React.Component {
               .then((doc) => {
               //  this.setState({message:'User Added'})
                 this.notify('user added')
-                window.location.reload()
+                this.setState({loading:false})
+                this.props.parentCallback(false);
+
               })
               .catch((error) => {
                 this.notify(error)
-                console.error(error);
+                this.setState({loading:false})
               })
             }
       }
 
       validateForm() {
         let formIsValid = true;
-
+        this.setState({loading:true})
 
         if(this.state.noEmail!==true){
           if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(this.state.email))
@@ -135,6 +143,7 @@ export default class Form extends React.Component {
           this.notify("Please enter mobile no.")
          
         }
+      
         if (this.state.dob=== "" || this.state.dob=== null) {
           formIsValid = false;
           this.notify("Please enter Date of birth.")
@@ -145,15 +154,20 @@ export default class Form extends React.Component {
           this.notify("Please enter Patient Type.")
          
         }
+        if(this.state.pin.length !== 6){
+          formIsValid = false;
+          this.notify("Please enter a valid pin.")
+        }
         var pattern = new RegExp(/^[0-9\b]+$/) 
         if (!pattern.test(this.state.phone)) {
           formIsValid = false;
-          this.notify("Please enter valid a phone number.")
+          this.notify("Please enter a valid phone number.")
 
         }else if(this.state.phone.length !== 10){
           formIsValid = false;
           this.notify("Please enter valid a phone number.")
         }
+        this.setState({loading:false})
         return formIsValid;
         
 
@@ -182,7 +196,10 @@ export default class Form extends React.Component {
 
         <CCol xs="12" md="12">
           <CCard>
+          <Loader loaded={!this.state.loading}>
             <CCardBody>
+          
+
               <CForm className="form-horizontal">
                 
 
@@ -268,6 +285,17 @@ export default class Form extends React.Component {
                     />
                   </CCol>
                 </CFormGroup>
+                <CFormGroup row>
+                  <CCol md="3">
+                    <CLabel htmlFor="pin">Pin Code:</CLabel>
+                  </CCol>
+                  <CCol xs="12" md="9">
+                    <CInput defaultValue={this.state.pin} onChange={e => {this.setState({ pin:e.target.value })}} type="tel" id="pin" placeholder="123456" required />
+                  </CCol>
+                </CFormGroup>
+
+
+
 
                 <CFormGroup row>
                   <CCol md="3">
@@ -329,6 +357,7 @@ export default class Form extends React.Component {
             <CCardFooter>
               <CButton onClick={this.formSubmit} size="md" color="info" > Submit</CButton>
             </CCardFooter>
+            </Loader>
           </CCard>
           </CCol>
           </CRow>

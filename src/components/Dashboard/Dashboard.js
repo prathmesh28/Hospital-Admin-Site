@@ -55,6 +55,11 @@ return  (
                 size="lg">Doctors</CButton></Link>
               
             </CCol>
+            <CCol col="4" sm="4" md="2" xl className="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+              <Link to="/data"><CButton color="info" 
+                size="lg">Data</CButton></Link>
+              
+            </CCol>
             
             
             <CCol col="3" sm="3" md="2" style={{alignSelf:'flex-end',margin:20}} className="col-xs-12 col-sm-6 col-md-3 col-lg-3">
@@ -78,7 +83,9 @@ return  (
                 <CModalTitle>&nbsp; User Form</CModalTitle>
               </CModalHeader>
               <CModalBody>
-                <Form/>
+                <Form parentCallback = {(childData) => {
+                     setInfo(childData)
+                }}/>
               </CModalBody>
               <CModalFooter>
                 <CButton color="secondary" onClick={() => setInfo(!info)}>Cancel</CButton>
