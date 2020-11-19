@@ -116,7 +116,7 @@ class Dashboard extends React.Component {
       let s = newDate.getSeconds();
       let ms = newDate.getMilliseconds();
       let name = index.Name.replace(/\s+/g, '')
-      let newEmail = name + y+m+d+h+mt+s+ms +'@hospital.com'
+      let newEmail = index.Phone +'@hospital.com'
       this.setState({info:true, email:newEmail})
 
     }else{
