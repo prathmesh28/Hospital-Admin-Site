@@ -44,6 +44,7 @@ class Dashboard extends React.Component {
     password:'',
     id: '',
     loading:false,
+    showPassword:false
 
   }
   }
@@ -94,12 +95,12 @@ class Dashboard extends React.Component {
           this.setState({loading:false})
          }, 3000);
 
-     }).catch((error)=>{
-      setTimeout(() => {
-        this.setState({loading:false})
-       }, 3000);
-       this.notify(error)
-      })
+     })
+     .catch(error => {
+      this.setState({ loading:false })
+      this.notify(error.message)
+    })
+      
   }
   pageNav=(item)=>{
     this.props.history.push(`/User/${item.id}`)
@@ -107,16 +108,9 @@ class Dashboard extends React.Component {
    toggleDetails = (index) => {
     this.setState({ id:index.id })
     if (index.Email===null||index.Email===""){
-      let newDate = new Date()
-      let d = newDate.getDate();
-      let m = newDate.getMonth() + 1;
-      let y = newDate.getFullYear();
-      let h = newDate.getHours();
-      let mt = newDate.getMinutes();
-      let s = newDate.getSeconds();
-      let ms = newDate.getMilliseconds();
+      
       let name = index.Name.replace(/\s+/g, '')
-      let newEmail = index.Phone +'@hospital.com'
+      let newEmail = name +'@hospital.com'
       this.setState({info:true, email:newEmail})
 
     }else{
@@ -166,7 +160,7 @@ class Dashboard extends React.Component {
                         </CInputGroupText>
                       </CInputGroupPrepend>
        
-                      <CInput type="text" value={this.state.email} readOnly={true} />
+                      <CInput type="text" value={this.state.email} onChange={e=> this.setState({email:e.target.value})} />
                     </CInputGroup>
                     <CInputGroup className="mb-4">
                       <CInputGroupPrepend>
@@ -175,9 +169,19 @@ class Dashboard extends React.Component {
                         </CInputGroupText>
                       </CInputGroupPrepend>
            
-                      <CInput type="text" value={this.state.password} readOnly={true}/>
+                      <CInput type={this.state.showPassword?"text":"password"} value={this.state.password} onChange={e=> this.setState({password:e.target.value})}/>
                     </CInputGroup>
-                    <div>*Please note down email and password</div>
+                    <div class="form-check" style={{margin:20}}>
+                      <label class="form-check-label">
+                        <input class="form-check-input" type="checkbox" onChange={e => {
+                          const { checked } = e.target
+                          this.setState({
+                            showPassword: checked
+                          })
+                        }} defaultChecked={this.state.showPassword}/>
+                        Show Password
+                      </label>
+                    </div>
                     <CRow>
                       <CCol xs="6">
                         <CButton color="info" onClick={()=> this.UserSignUP()} className="px-4">Add User</CButton>
