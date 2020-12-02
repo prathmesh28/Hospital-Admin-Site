@@ -171,9 +171,9 @@ class Dashboard extends React.Component {
            
                       <CInput type={this.state.showPassword?"text":"password"} value={this.state.password} onChange={e=> this.setState({password:e.target.value})}/>
                     </CInputGroup>
-                    <div class="form-check" style={{margin:20}}>
-                      <label class="form-check-label">
-                        <input class="form-check-input" type="checkbox" onChange={e => {
+                    <div className="form-check" style={{margin:20}}>
+                      <label className="form-check-label">
+                        <input className="form-check-input" type="checkbox" onChange={e => {
                           const { checked } = e.target
                           this.setState({
                             showPassword: checked

@@ -83,6 +83,7 @@ export default class Form extends React.Component {
   formSubmit = async () => {
     this.setState({loading:true})
         if (this.validateForm(0)) {
+          console.log('hi.....')
           this.setState({loading:true})
              //   
                 let data ={
@@ -105,9 +106,20 @@ export default class Form extends React.Component {
                         data
               })
               .then((doc) => {
-              //  this.setState({message:'User Added'})
                 this.notify('user added')
-                this.setState({loading:false})
+                this.setState({
+                  loading:false,
+                  name: "",
+                  dob: null,
+                  gender: "",
+                  phone: null,
+                  email: "",
+                  address: "",
+                  pin:null,
+                  doctor: "",
+                  disease: "",
+                })
+                  
                 this.props.parentCallback(false);
 
               })

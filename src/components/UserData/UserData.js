@@ -68,7 +68,7 @@ class UserData extends React.Component{
          Disease: item.val().data['Disease'], 
          Doctor: item.val().data['Doctor'],
          Date: item.val().data['NextDate'],
-         remark: item.val().data['remark'], 
+         remark: item.val().data['remark']===null?'':'', 
       })
      })
 
@@ -179,7 +179,7 @@ class UserData extends React.Component{
          
 
         }else{
-          this.setState({loading:true})
+          this.setState({loading:true,nextEdit:false})
            Firebase.database().ref('/Users/' + id + '/data/' ).update({
             
             NextDate:temp,
@@ -189,14 +189,12 @@ class UserData extends React.Component{
             .then((doc) => {
             //  this.setState({message:'User Added'})
               this.notify('Updated')
-              this.setState({nextEdit:false})
               setTimeout(() => {
                 this.setState({loading:false})
                }, 3000);
             })
             .catch((error) => {
               this.notify(error)
-              this.setState({nextEdit:false})
               console.error(error);
               setTimeout(() => {
                 this.setState({loading:false})
@@ -220,19 +218,32 @@ class UserData extends React.Component{
     //for patient type categeries
     let renderData
     if (this.state.Disease === 'Paediatric'){
-      renderData= <Paediatric id={id}/>
+      renderData= <Paediatric id={this.props.match.params.id}/>
     }
     else if (this.state.Disease === 'Pregnancy'){
-      renderData= <Pregnancy id={this.state.id}/>
+      renderData= <Pregnancy id={this.props.match.params.id}/>
     }
     else{
-      renderData= <Others id={this.state.id}/>
+      renderData= <Others id={this.props.match.params.id}/>
     }
     
     return(
       <>
       <Header/>
-      <Loader loaded={!this.state.loading}>
+     
+        {/* Loading */}
+        <CModal 
+              show={this.state.loading} 
+              // onClose={() => this.setState({edit:false})}
+            //  color="info"
+              closeOnBackdrop={false}
+              style={{width:500,height:500,backgroundColor:'transparent',borderWidth:0}}
+            >
+               <Loader loaded={!this.state.loading} ></Loader>
+
+            </CModal>
+
+
 
         {/* user Details section */}
       <CRow style={{margin:10}}>
@@ -385,7 +396,7 @@ class UserData extends React.Component{
                         <CLabel htmlFor="remarks">Remarks:</CLabel>
                       </CCol>
                       <CCol xs="12" md="10">
-                      <p id="remarks" class="border" style={{borderRadius:5,fontSize:16,paddingInlineStart:10,paddingInlineEnd:10}} >
+                      <p id="remarks" className="border" style={{borderRadius:5,fontSize:16,paddingInlineStart:10,paddingInlineEnd:10}} >
                         {e.remark}
                         </p>  
                        
@@ -546,7 +557,6 @@ class UserData extends React.Component{
           </CCard>
         </CCol>
     </CRow>
-    </Loader>
     </>
   );
 }

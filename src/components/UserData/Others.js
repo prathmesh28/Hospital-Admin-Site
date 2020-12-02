@@ -60,8 +60,9 @@ export default class Others extends React.Component {
  }
  componentDidMount(){
    id = this.props.id;
-   console.log(id)
+   console.log(' check id',this.props)
    Firebase.database().ref('/Users/'+id +'/data/history/').on("value",(item) => {
+      console.log('check',id)
 
       const history = _.map( item.val(), (e) => {
          return e.sethistory

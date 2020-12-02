@@ -22,12 +22,7 @@ import Form from './Form'
 function Dashboard() {
   const [info, setInfo] = useState(false)
   
-// const [time, setTime] = React.useState(new Date().toLocaleString());
-// useEffect(()=>{
-//     window.setInterval(function () {
-//   setTime(new Date().toLocaleString())
-//   }, 1000);
-// })
+
 
 const [today, setDate] = React.useState(new Date()); // Save the current date to be able to trigger an update
 
