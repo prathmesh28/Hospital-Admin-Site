@@ -12,6 +12,7 @@ import Logout from "./Logout";
 import useUser from "../_hooks/useUser";
 import UserData from "./UserData/UserData"
 import Doctors from "./Doctors/Doctors"
+import Appointment from "./Appointments/Appointment"
 import Data from "./Data/Data"
 export default function CustomRouter() {
   // useUser is a custom hook (src/_hooks/useUser.tsx)
@@ -36,6 +37,9 @@ export default function CustomRouter() {
           </Route>
           <Route path="/Doctors">
             <Doctors/>
+          </Route>
+          <Route path="/Appointment">
+            <Appointment/>
           </Route>
           <Route path="/Data">
             <Data/>
