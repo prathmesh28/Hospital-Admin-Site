@@ -27,6 +27,8 @@ import _ from 'lodash';
 import Header from '../Dashboard/Header'
 import DatePicker from 'react-date-picker';
 import { v4 as uuidv4 } from 'uuid';
+import { Link } from "react-router-dom";
+import Loader from 'react-loader';
 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -36,25 +38,63 @@ const fields = ['name', { key: 'phone', Label: 'Phone No' },'Doctor Name' , 'Rem
 class Appointment extends React.Component {
   constructor() {
     super();
+  
     this.state = {
-     
-    
-    }
-    this.state = {
-      showViewer: false
+      showViewer: false,
+      data:null
     }
   }
  
+  componentDidMount() {
+    Firebase.database().ref('Appointments/').on("value", (item) => {
+      // console.log(item.val())
+      const users = _.map(item.val(), (e) => {
+        return e.data
+      })
+      this.setState({ data: users })
+    })
+  }
+
+
   render() {
 
     const dataNew = this.state.dataNew
     const dataOld = this.state.dataOld
+
+    const data = this.state.data
 
     // const details = this.state.details
 
 
     return (
       <>
+       <Header/>
+       <CCard>
+        <CCardBody>
+          <CRow className="align-items-center" >
+           
+
+            <CCol className="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+              <Link to="/Dashboard"><CButton color="info" 
+                size="lg">UserData</CButton></Link>
+            </CCol>
+
+            <CCol className="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+              <Link to="/Doctors"><CButton color="info" 
+                size="lg">Doctors</CButton></Link>
+            </CCol>
+
+            <CCol className="col-xs-12 col-sm-6 col-md-3 col-lg-1">
+              <Link to="/data"><CButton color="info" 
+                size="lg">Data</CButton></Link>
+            </CCol>
+            
+
+          </CRow>
+          </CCardBody>
+
+      </CCard>
+
        <CRow style={{ margin: '30px' }}>
           <CCol xs="12" lg="12">
       <CCard>
@@ -81,7 +121,7 @@ class Appointment extends React.Component {
         <CTabPane data-tab="home">
         <CCardBody>
                 <CDataTable
-                  items={dataNew}
+                  items={data}
                   fields={fields}
                   columnFilter
                   //tableFilter
@@ -137,7 +177,7 @@ class Appointment extends React.Component {
                   sorter
                   pagination
 
-                  scopedSlots={{
+                  scopedSlots={{ 
 
                     'Confirm':
                       (item, index) => {
