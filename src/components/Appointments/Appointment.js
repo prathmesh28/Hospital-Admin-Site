@@ -33,7 +33,7 @@ import Loader from 'react-loader';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 toast.configure()
-const fields = ['name', { key: 'phone', Label: 'Phone No' },'Doctor Name' , 'Remarks', 'Confirm']
+const fields = ['Name', { key: 'Phone', Label: 'Phone No' },{ key: 'Type', Label: 'Problem' },'Doctor' , 'timeslot', 'Confirm','Delete']
 
 class Appointment extends React.Component {
   constructor() {
@@ -50,8 +50,11 @@ class Appointment extends React.Component {
       // console.log(item.val())
       const users = _.map(item.val(), (e) => {
         return e.data
+        
       })
       this.setState({ data: users })
+      
+      
     })
   }
 
@@ -62,7 +65,8 @@ class Appointment extends React.Component {
     const dataOld = this.state.dataOld
 
     const data = this.state.data
-
+    console.log(data);
+    
     // const details = this.state.details
 
 
@@ -78,7 +82,7 @@ class Appointment extends React.Component {
               <Link to="/Dashboard"><CButton color="info" 
                 size="lg">UserData</CButton></Link>
             </CCol>
-
+            
             <CCol className="col-xs-12 col-sm-6 col-md-3 col-lg-3">
               <Link to="/Doctors"><CButton color="info" 
                 size="lg">Doctors</CButton></Link>
@@ -135,39 +139,55 @@ class Appointment extends React.Component {
   
                     
                     'Confirm':
+
+                               (item,index)=>(
+                                <td>
+                                  <CButton
+                                  color="primary"
+                                  shape="outline"
+                                  size="sm"
+       
+                                  onClick={()=>{
+                                    console.log(item,index)
+                                     Firebase.database().ref('Appointments/' + item.id+'/data/').update({status:false})
+                                  }}>{item.status?'Done':'Panding'}</CButton>
+                                </td>
+                              ),
+                              
+                              
+                      'Delete':
                       (item, index) => {
                         return (
                           <td className="py-2">
 
                             <CButton size="sm" color="danger" className="ml-1"
                               onClick={async () => {
-                                var r = await window.confirm("Table entry of name: " + item.name + " will be deleted");
-                                
+                                var r = await window.confirm("Table entry of name: " + item.Name + " will be deleted");
+                                if (r === true) {
+
+                                  let userRef = Firebase.database().ref('Appointments/' + item.id)
+                                  userRef.remove()
+                                }
 
 
                               }}>
-                              Confirm
+                              Delete
                                </CButton>
                           </td>
                         )
                       },
-
-
-                  }}>
-
-
-
-
-
-
-
+                    }}>
+                            
+                        
+                        
+                      
                 </CDataTable>
               </CCardBody>
         </CTabPane>
         <CTabPane data-tab="profile">
         <CCardBody>
                 <CDataTable
-                  items={dataOld}
+                  items={data}
                   fields={fields}
                   columnFilter
                   //tableFilter
@@ -180,26 +200,42 @@ class Appointment extends React.Component {
                   scopedSlots={{ 
 
                     'Confirm':
+                    (item,index)=>(
+                      <td>
+                        <CButton
+                        color="primary"
+                        shape="outline"
+                        size="sm"
+
+                        onClick={()=>{
+                          console.log(item,index)
+                           Firebase.database().ref('Appointments/' + item.id+'/data/').update({status:true})
+                        }}>{item.status?'Done':'Panding'}</CButton>
+                      </td>
+                    ),
+                    
+                        'Delete':
                       (item, index) => {
                         return (
                           <td className="py-2">
 
                             <CButton size="sm" color="danger" className="ml-1"
                               onClick={async () => {
-                                var r = await window.confirm("Table entry of name: " + item.name + " will be deleted");
-                              
+                                var r = await window.confirm("Table entry of name: " + item.Name + " will be deleted");
+                                if (r === true) {
+
+                                  let userRef = Firebase.database().ref('Appointments/' + item.id)
+                                  userRef.remove()
+                                }
 
 
                               }}>
-                              Confirm
+                              Delete
                                </CButton>
                           </td>
                         )
                       },
-
-
-                  }}>
-
+                    }}>
 
                 </CDataTable>
               </CCardBody>
