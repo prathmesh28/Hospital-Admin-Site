@@ -59,8 +59,8 @@ class Appointment extends React.Component {
       // console.log(item.val())
     
           const checkUsersNew = _.map(item.val(), (e) => {
-      
-         if(e.data.status===true && e.data.cancel===false)
+      //add && e.data.done==false
+         if(e.data.status===true && e.data.cancel===false )
              return e.data
          })
          const usersNew = _.filter(checkUsersNew)
