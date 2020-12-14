@@ -17,7 +17,8 @@ import {
   CModalHeader,
   CModalTitle,
   CModalBody,
-  CFormText
+  CFormText,
+  CSelect
 } from '@coreui/react'
 import { withRouter } from 'react-router-dom'
 import Firebase from "../../firebase";
@@ -43,6 +44,7 @@ const fields = [
   { key: 'eveningworkHours', _style: { width: '20%' } },
   { key: 'specialization', _style: { width: '20%' } },
   { key: 'qualification', _style: { width: '20%' } },
+  {key:'Available', _style:{width:'20%'}},
   {
     key: 'show_details',
     label: '',
@@ -69,7 +71,8 @@ class Doctors extends React.Component {
     MorworkFrom: null,
     MorworkTo: null,
     EvnworkFrom: null,
-    EvnworkTo: null
+    EvnworkTo: null,
+    DStatus:true
 
   }
   componentDidMount() {
@@ -102,10 +105,7 @@ class Doctors extends React.Component {
     if (this.validateForm(0)) {
 
      
-      if(this.state.id===null){
-        let id = await uuidv4(data)
-        this.setState({id})
-      }
+      
 
       let data = {
         name: this.state.name,
@@ -116,7 +116,13 @@ class Doctors extends React.Component {
         MorworkFrom: this.state.MorworkFrom,
         MorworkTo: this.state.MorworkTo,
         EvnworkFrom: this.state.EvnworkFrom,
-        EvnworkTo: this.state.EvnworkTo
+        EvnworkTo: this.state.EvnworkTo,
+        Available:this.state.DStatus
+      }
+      if(this.state.id===null){
+        let id = await uuidv4(data)
+        this.setState({id})
+        console.log('hi')
       }
       
       data = { ...data, id: this.state.id }
@@ -125,7 +131,7 @@ class Doctors extends React.Component {
         data
       })
         .then((doc) => {
-          this.setState({ showinfo:false,id:null, name: "", Phone_No:"",specialization: "", qualification: "", MorworkFrom: null, MorworkTo: null,EvnworkFrom: null, EvnworkTo: null })
+          this.setState({ showinfo:false,id:null, name: "", Phone_No:"",specialization: "", qualification: "" ,availibility:this.state.DStatus, MorworkFrom: null, MorworkTo: null,EvnworkFrom: null, EvnworkTo: null})
 
         })
         .catch((error) => {
@@ -298,6 +304,36 @@ class Doctors extends React.Component {
     </tr>
   </tbody>
 
+  
+    <CFormGroup row>
+    <CCol md="2">
+    <CLabel htmlFor="name">Availibility:</CLabel>
+    </CCol >
+    <CCol xs="12" md="10" id="Availibility">
+    <CSelect defaultValue={this.state.DStatus} 
+                      onChange={e => {
+                        
+                        this.setState({ DStatus:e.target.value })
+
+                      }} 
+                      custom name="select" id="Doctor Status">
+                      <option value="true">Available</option>
+                      <option value="false">Unavailable</option>
+                    
+                    </CSelect>
+      {/* <Picker
+  selectedValue={this.state.selectedCity}
+  onValueChange={(itemValue, itemIndex) =>
+  this.setState({ selectedCity: itemValue })
+  }
+ >
+   <Picker.Item label="city1" value="1" />
+   <Picker.Item label="city2" value="2" />
+</Picker> */}
+</CCol>
+    </CFormGroup>
+  
+
 
 </table>
 
@@ -395,6 +431,7 @@ class Doctors extends React.Component {
                                     MorworkTo:item.MorworkTo,
                                     EvnworkFrom:item.EvnworkFrom,
                                     EvnworkTo:item.EvnworkTo,
+                                    availibility:item.DStatus,
                                     id:item.id})
                                   
                                 }}
@@ -414,6 +451,10 @@ class Doctors extends React.Component {
                                 }}>
                                 Delete
                             </CButton>
+
+                            
+     
+    
                             </CCardBody>
                           </CCollapse>
                         )
