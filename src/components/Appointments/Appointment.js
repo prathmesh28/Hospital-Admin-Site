@@ -60,7 +60,7 @@ class Appointment extends React.Component {
     
           const checkUsersNew = _.map(item.val(), (e) => {
       
-         if(e.data.status===true)
+         if(e.data.status===true && e.data.cancel===false)
              return e.data
          })
          const usersNew = _.filter(checkUsersNew)
@@ -301,8 +301,8 @@ class Appointment extends React.Component {
                                        onClick={async () => {
                                      
                                         
-                                         var person = prompt("Reason:", "");
-                                         if (person == null || person == "") {
+                                         var person = prompt("Reason:", "canceled by doctor.");
+                                         if (person == null ) {
                                          //  txt = "User cancelled the prompt.";
                                          } else {
                                            
@@ -339,10 +339,6 @@ class Appointment extends React.Component {
               </CTabs>
             </CCard>
           </CCol>
-
-
-
-
 
 
         </CRow>
