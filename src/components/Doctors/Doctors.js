@@ -192,7 +192,7 @@ class Doctors extends React.Component {
         <Header />
         <CModal 
               show={this.state.showinfo} 
-              onClose={() => this.setState({showinfo:false})}
+              onClose={() => this.setState({ showinfo:false,id:null, name: "", Phone_No:"",specialization: "", qualification: "", MorworkFrom: null, MorworkTo: null,EvnworkFrom: null, EvnworkTo: null })}
               color="info"
                style={{width:'70vw'}}
               closeOnBackdrop={true}
@@ -383,15 +383,7 @@ class Doctors extends React.Component {
                                {/* <p className="text-muted">Phone No: {item.Phone_No}</p> */}
                               <CButton size="sm" color={'info'} 
                                 onClick={() => {
-        // name: this.state.name,
-        // Phone_No: this.state.Phone_No,
-        // specialization: this.state.specialization,
-        // gender: this.state.gender,
-        // qualification: this.state.qualification,
-        // MorworkFrom: this.state.MorworkFrom,
-        // MorworkTo: this.state.MorworkTo,
-        // EvnworkFrom: this.state.EvnworkFrom,
-        // EvnworkTo: this.state.EvnworkTo
+        
                                   this.setState({
                                     showinfo:true,
                                     name:item.name,
