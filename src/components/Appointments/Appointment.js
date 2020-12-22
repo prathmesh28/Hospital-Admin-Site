@@ -60,10 +60,20 @@ class Appointment extends React.Component {
     
           const checkUsersNew = _.map(item.val(), (e) => {
       //add && e.data.done==false
-         if(e.data.status===true && e.data.cancel===false && e.data.timeValue<=new Date().valueOf())
+         if(e.data.status===true && e.data.cancel===false )
              return e.data
          })
-         const usersNew = _.filter(checkUsersNew)
+        //  const usersNew = _.filter(checkUsersNew)
+        //  e.data.timeValue<=new Date().valueOf()
+
+         const usersNew = _.filter(checkUsersNew, (e) => {
+          if(e!=undefined && e.timeValue<=new Date().valueOf()){
+            let temp = e
+            temp.done = true
+            return temp
+          }else return e
+           
+        })
          this.setState({ dataNew: usersNew })
    
          const users = _.map(item.val(), (e) => {
