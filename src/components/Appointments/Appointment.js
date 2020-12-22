@@ -33,7 +33,7 @@ import Loader from 'react-loader';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 toast.configure()
-const fields = ['Name', { key: 'Phone', Label: 'Phone No' }, { key: 'Type', Label: 'Problem' }, 'Doctor', 'timeslot', {
+const fields = [ 'Date', 'timeslot', 'Doctor','Name', { key: 'Phone', Label: 'Phone No' }, { key: 'Type', Label: 'Problem' }, {
   key: 'show_details',
   label: '',
   _style: { width: '1%' },
@@ -60,7 +60,7 @@ class Appointment extends React.Component {
     
           const checkUsersNew = _.map(item.val(), (e) => {
       //add && e.data.done==false
-         if(e.data.status===true && e.data.cancel===false )
+         if(e.data.status===true && e.data.cancel===false && e.data.timeValue<=new Date().valueOf())
              return e.data
          })
          const usersNew = _.filter(checkUsersNew)
@@ -159,12 +159,14 @@ class Appointment extends React.Component {
                         items={dataNew}
                         fields={fields}
                         columnFilter
-                        //tableFilter
+                        tableFilter
                         itemsPerPageSelect
                         itemsPerPage={5}
                         hover
                         sorter
                         pagination
+                        onRowClick={(item, index) => { this.toggleDetails(index) }}
+
 
                         scopedSlots={{
                           'show_details':
@@ -197,7 +199,7 @@ class Appointment extends React.Component {
                                       onClick={() => {
                                         console.log(item, index)
                                         Firebase.database().ref('Appointments/' + item.id + '/data/').update({ status: false })
-                                      }}>{item.status ? 'Done' : 'Pending'}</CButton>
+                                      }}>{item.status ? 'Done' : 'Confirm'}</CButton>
 
 
 
@@ -251,12 +253,13 @@ class Appointment extends React.Component {
                         items={dataOld}
                         fields={fields}
                         columnFilter
-                        //tableFilter
+                        tableFilter
                         itemsPerPageSelect
                         itemsPerPage={5}
                         hover
                         sorter
                         pagination
+                        onRowClick={(item, index) => { this.toggleDetails(index) }}
 
                         scopedSlots={{
                           'show_details':
@@ -290,7 +293,7 @@ class Appointment extends React.Component {
                                       onClick={() => {
                                         console.log(item, index)
                                         Firebase.database().ref('Appointments/' + item.id + '/data/').update({ status: true })
-                                      }}>{item.status ? 'Done' : 'Panding'}</CButton>
+                                      }}>{item.status ? 'Done' : 'Confirm'}</CButton>
 
 
 

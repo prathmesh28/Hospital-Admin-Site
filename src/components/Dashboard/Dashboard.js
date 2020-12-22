@@ -40,29 +40,30 @@ return  (
      <Header/>
      <CCard>
         <CCardBody>
-          <CRow className="align-items-center" >
+     
+          <CRow className="d-flex justify-content-between mb-3" >
             
-            <CCol className="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+            <CCol className="p-2">
               <CButton color="info"  onClick={() => setInfo(!info)} size="lg">Add new User</CButton>
             </CCol>
 
-            <CCol className="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+            <CCol className="p-2">
               <Link to="/Appointment"><CButton color="info" 
                 size="lg">Appointments</CButton></Link>
             </CCol>
 
-            <CCol className="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+            <CCol className="p-2">
               <Link to="/Doctors"><CButton color="info" 
                 size="lg">Doctors</CButton></Link>
             </CCol>
 
-            <CCol className="col-xs-12 col-sm-6 col-md-3 col-lg-1">
+            <CCol className="p-2">
               <Link to="/data"><CButton color="info" 
                 size="lg">Data</CButton></Link>
             </CCol>
             
-            <CCol style={{alignSelf:'inherit'}} className="col-xs-12 col-sm-6 col-md-3 col-lg-2">
-              {today.toLocaleString()}            
+            <CCol style={{alignSelf:'center',fontSize:15}} className="p-2">
+              {today.toUTCString().substr(0,26)}            
             </CCol>
 
           </CRow>

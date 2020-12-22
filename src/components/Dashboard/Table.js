@@ -29,7 +29,7 @@ import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; 
 toast.configure()
 
-const fields = ['Name','Address', 'Date', 'Disease','Dob','Doctor', 'Email', 'Gender', 'NextDate', 'Phone', 'Account']
+const fields = ['Date', 'Name', 'Disease', 'Doctor','Address', 'Phone', 'Account']
 
 
 
@@ -132,7 +132,7 @@ class Dashboard extends React.Component {
     
   return  (
     <>
-          <Loader loaded={!this.state.loading}>
+          {/* <Loader loaded={!this.state.loading}> */}
 
       <CRow style={{margin:'30px'}}>
       <CCol xs="12" lg="12">
@@ -214,6 +214,8 @@ class Dashboard extends React.Component {
               items={data}
               fields={fields}
               columnFilter
+              loading={this.state.loading}
+              onRowClick={(item, index)=>{ item.Account?this.pageNav(item) : this.toggleDetails(item) }}
               tableFilter
               itemsPerPageSelect
               itemsPerPage={5}
@@ -221,8 +223,7 @@ class Dashboard extends React.Component {
               sorter
               pagination
               clickableRows
-              onRowClick={(item) => {
-              }}
+             
                scopedSlots = {{
 
                 'Account':
@@ -241,22 +242,7 @@ class Dashboard extends React.Component {
                       </td>
                       )
                   },
-                  'show_details':
-                  (item, index)=>{
-                    return (
-                      <td className="py-2">
-                        <CButton
-                          color="primary"
-                          variant="outline"
-                          shape="square"
-                          size="sm"
-                          onClick={()=>{this.toggleDetails(index)}}
-                        >
-                          {this.state.details.includes(index) ? 'Hide' : 'Show'}
-                        </CButton>
-                      </td>
-                      )
-                  },
+                
                 }}
             />
             </CCardBody>
@@ -264,7 +250,7 @@ class Dashboard extends React.Component {
         </CCol>
 
       </CRow>
-      </Loader>
+      {/* </Loader> */}
 
     </>
   

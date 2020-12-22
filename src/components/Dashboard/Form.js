@@ -41,7 +41,6 @@ export default class Form extends React.Component {
       pin:null,
       doctor: "",
       disease: "",
-      nextDate: null,
       message: "error",
       PatientType:false,
       doctors:null,
@@ -96,8 +95,8 @@ export default class Form extends React.Component {
                 Pin:this.state.pin,
                 Doctor:this.state.doctor,
                 Disease:this.state.disease,
-                Date:new Date().toLocaleString(),
-                NextDate:this.state.nextDate,
+                Date:new Date().toISOString().substr(0,10)+ ' ' +new Date().toISOString().substr(11,8)        
+
               }
               let id = await uuidv4(data)
               this.setState({id})
@@ -159,6 +158,11 @@ export default class Form extends React.Component {
         if (this.state.dob=== "" || this.state.dob=== null) {
           formIsValid = false;
           this.notify("Please enter Date of birth.")
+         
+        }
+        if (this.state.gender=== "" || this.state.gender=== null) {
+          formIsValid = false;
+          this.notify("Please enter Gender.")
          
         }
         if (this.state.disease=== "" || this.state.disease=== null || this.state.disease=== 'null') {
